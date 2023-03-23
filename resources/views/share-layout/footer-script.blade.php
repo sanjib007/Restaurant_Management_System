@@ -16,23 +16,9 @@
 <!-- Filterizr-->
 <script src="{{asset('assets/plugins/filterizr/jquery.filterizr.min.js')}}"></script>
 <!-- Page specific script -->
-<script>
-$(function () {
-  $(document).on('click', '[data-toggle="lightbox"]', function(event) {
-    event.preventDefault();
-    $(this).ekkoLightbox({
-      alwaysShowClose: true
-    });
-  });
 
-  // $('.filter-container').filterizr({gutterPixels: 3});
-  // $('.btn[data-filter]').on('click', function() {
-  //   $('.btn[data-filter]').removeClass('active');
-  //   $(this).addClass('active');
-  // });
-})
-</script>
-
+<!-- jQuery -->
+<script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
 <!-- ChartJS -->
 <script src="{{asset('assets/plugins/chart.js/Chart.min.js')}}"></script>
 <!-- Sparkline 
@@ -57,3 +43,24 @@ $(function () {
 <script src="{{asset('assets/dist/js/pages/dashboard.js')}}"></script>-->
 <!-- Select2 -->
 <script src="{{asset('assets/plugins/select2/js/select2.full.min.js')}}"></script>
+<!-- DataTables  & Plugins -->
+<script src="{{asset('assets/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
+<script src="{{asset('assets/plugins/jszip/jszip.min.js')}}"></script>
+<script src="{{asset('assets/plugins/pdfmake/pdfmake.min.js')}}"></script>
+<script src="{{asset('assets/plugins/pdfmake/vfs_fonts.js')}}"></script>
+<script src="{{asset('assets/plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
+<!-- Ekko Lightbox -->
+<script src="{{ asset('assets/plugins/ekko-lightbox/ekko-lightbox.min.js') }}"></script>
+
+<!-- notify js -->
+<script src="{{ asset('assets/dist/js/notify.min.js') }}"></script>
+
+<!-- myScript-->
+<script src="{{ asset('assets/dist/js/myjs.js') }}"></script>

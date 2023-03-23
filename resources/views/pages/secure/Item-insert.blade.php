@@ -80,11 +80,11 @@
                                 @foreach ($categories as $aCat)
                                   <tr>
                                     <td>{{ $aCat->category_name }}</td>
-                                    <td>{{ $aCat->category_description }}</td>
+                                    <td class="ellipsis">{{ $aCat->category_description }}</td>
                                     <td><img style="width: 100px;" src="{{ asset('assets/img/category/'.$aCat->category_image) }}" alt="Item"></td>
                                     <td>
-                                      <a href="{{ route('category.edit',$aCat->id) }}" class="btn btn-warning"><i class="fa fa-edit"></i></a>
-                                      <a href="{{ route('category.delete',$aCat->id) }}" class="btn btn-danger"><i class="fa fa-times"></i></a>
+                                      <a href="{{ route('category.edit',$aCat->id) }}" class="btn btn-warning btn-xs"><i class="fa fa-edit"></i></a>
+                                      <a href="{{ route('category.delete',$aCat->id) }}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i></a>
                                     </td>
                                   </tr>
                                 @endforeach
@@ -198,13 +198,13 @@
                               @foreach ($items as $aItem)
                               <tr>
                                 <td>{{ $aItem->item_name }}</td>
-                                <td>{{ $aItem->item_description }}</td>
+                                <td class="ellipsis">{{ $aItem->item_description }}</td>
                                 <td>{{ $aItem->item_price }}/-</td>
                                 <td><img style="width: 100px;" src="{{ asset('assets/img/items/'.$aItem->item_image) }}" alt="Item"></td>
                                 <td>{{ $aItem->category_name }}</td>
                                 <td>
-                                    <a href="{{ route('item.edit', $aItem->id ) }}" class="btn btn-warning"><i class="fa fa-edit"></i></a> || 
-                                    <a href="{{ route('item.delete', $aItem->id ) }}" class="btn btn-danger"><i class="fa fa-times"></i></a>
+                                    <a href="{{ route('item.edit', $aItem->id ) }}" class="btn btn-warning btn-xs"><i class="fa fa-edit"></i></a> || 
+                                    <a href="{{ route('item.delete', $aItem->id ) }}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i></a>
                                 </td>
                               </tr>
                               @endforeach

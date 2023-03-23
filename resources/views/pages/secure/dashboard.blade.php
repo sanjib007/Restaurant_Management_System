@@ -10,5 +10,9 @@
   @include('share-layout.customer-dashboard')
 @endif
 
+@if(Auth::user()->roles->pluck('name')[0] == "manager")
+  @include('share-layout.customer-dashboard')
+@endif
+
 
 @endsection

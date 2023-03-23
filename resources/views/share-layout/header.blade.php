@@ -6,7 +6,7 @@
 <!-- Navbar -->
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
 
-  @include('share-layout.right-nav')
+  @include('share-layout.top-nav')
 
 </nav>
 <!-- /.navbar -->
@@ -60,7 +60,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href={{ route('review') }}#" class="nav-link">
+          <a href="{{ route('review') }}" class="nav-link">
             <i class="nav-icon far fa-circle text-info"></i>
             <p>Review</p>
           </a>

@@ -17,11 +17,27 @@
       </div><!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
-
+    @if (\Session::has('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <strong>{!! \Session::get('success') !!}</strong>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+    @endif
+    @if (\Session::has('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong>{!! \Session::get('error') !!}</strong>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    @endif
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
         <div class="row">
+          @if($getAllItem != null)
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
@@ -38,58 +54,64 @@
                   </button>
                 </div>
               </div>
+              <form action="{{ route('order.submitOrder') }}" method="POST">
+                @csrf
               <div class="card-body">
                 <div class="row">
                   <div class="col-md-12">
+                    
                     <table class="table">
                       <thead>
                         <tr>
+                          <th>Item Image</th>
                           <th>Item Name</th>
                           <th>Item Quentity</th>
                           <th>Price</th>
                           <th>Total Price</th>
+                          <th>Action</th>
                         </tr>
                       </thead>
+                      <?php $totalAmount = 0; ?>
                       <tbody class="table-border-bottom-0">
+                        @foreach ($getAllItem as $aItem)
+                          <tr>
+                            <td>
+                              <a href="{{ asset('assets/img/items/'.$aItem->item_image) }}" data-toggle="lightbox" data-title="sample 1 - white">
+                                <img style="width: 100px; heig" src="{{ asset('assets/img/items/'.$aItem->item_image) }}" class="img-fluid mb-2" alt="{{ $aItem->item_name }}"/>
+                              </a>
+                            </td>
+                            <td><strong>{{ $aItem->item_name }}</strong></td>
+                            <td>
+                              <form>
+                                <div class="input-group input-group-sm">
+                                  <input type="text" id="getVal_{{ $aItem->id }}" value="{{ $aItem->totalItem }}" class="form-control">
+                                  <span class="input-group-append">
+                                    <button type="button" value="{{ $aItem->id }}" class="btn btn-info btn-flat changeItemQuantity">Change</button>
+                                  </span>
+                                </div>
+                              </form>
+                            </td>
+                            <td class="text-right">{{ $aItem->item_price }}/-</td>
+                            <td class="text-right">{{ $aItem->item_price * $aItem->totalItem }}/-</td>
+                            <td>
+                              <a href="{{ route('item.deleteRequestedItem', $aItem->id)  }}" class="btn btn-danger"><i class="fa fa-times"></i></a>
+                            </td>
+                          </tr>
+                          <?php $totalAmount = $totalAmount + ($aItem->item_price * $aItem->totalItem) ?>
+                        @endforeach
                         <tr>
-                          <td><strong>Egg & Butter Bread</strong></td>
-                          <td>
-                            <form>
-                              <input type="number" value="1">
-                            </form>
-                          </td>
-                          <td class="text-right">100/-</td>
-                          <td class="text-right">100/-</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Egg & Butter Bread</strong></td>
-                          <td>
-                            <form>
-                              <input type="number" value="2">
-                            </form>
-                          </td>
-                          <td class="text-right">100/-</td>
-                          <td class="text-right">200/-</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Egg & Butter Bread</strong></td>
-                          <td>
-                            <form>
-                              <input type="number" value="1">
-                            </form>
-                          </td>
-                          <td class="text-right">100/-</td>
-                          <td class="text-right">100/-</td>
-                        </tr>
-                        <tr>
-                          <td colspan="3" class="text-right"><b>Total Price</b></td>
-                          <td class="text-right"><b>400/-</b></td>
+                          <td colspan="4" class="text-right"><b>Total Price</b></td>
+                          <td class="text-right"><b>{{ $totalAmount }}/-</b></td>
+                          <td class="text-right"></td>
                         </tr>
                       </tbody>
                     </table>
+                    
                   </div>
+                  
                   <div class="col-md-12">
                     <div class="row">
+                      
                       <div class="col-8">
                         <div class="card card-warning">
                           <div class="card-header">
@@ -97,12 +119,12 @@
                           </div>
                           <!-- /.card-header -->
                           <div class="card-body">
-                            <form>
+                            
                               <div class="row">
                                 <div class="col-sm-12">
                                   <div class="form-group">
-                                    <label>Select any one</label>
-                                    <select class="form-control" id="select">
+                                    <label>Customer order position</label>
+                                    <select class="form-control" name="order_position" id="order_position_select">
                                       <option value="present" checked>Presnet here</option>
                                       <option value="takeaway">Take away</option>
                                     </select>
@@ -114,19 +136,19 @@
                                   <div class="col-sm-6">
                                     <div class="form-group">
                                       <label>Contact Name</label>
-                                      <input type="text" class="form-control" placeholder="Enter ...">
+                                      <input type="text" name="order_contact_name" class="form-control" placeholder="Enter ...">
                                     </div>
                                   </div>
                                   <div class="col-sm-6">
                                     <div class="form-group">
                                       <label>Contact Mobile no.</label>
-                                      <input type="text" class="form-control" placeholder="Enter ...">
+                                      <input type="text" name="order_contact_mobile" class="form-control" placeholder="Enter ...">
                                     </div>
                                   </div>
                                   <div class="col-sm-12">
                                     <div class="form-group">
                                       <label>Full Address</label>
-                                      <textarea class="form-control" rows="3" placeholder="Enter ..."></textarea>
+                                      <textarea class="form-control" name="order_contact_address" rows="3" placeholder="Enter ..."></textarea>
                                     </div>
                                   </div>
                                 </div>
@@ -136,25 +158,25 @@
                                   <div class="col-sm-6">
                                     <div class="form-group">
                                       <label>Name</label>
-                                      <input type="text" class="form-control" placeholder="Enter ...">
+                                      <input type="text" name="order_person_name" value="{{ auth()->user()->name }}" class="form-control" placeholder="Enter ...">
                                     </div>
                                   </div>
                                   <div class="col-sm-6">
                                     <div class="form-group">
                                       <label>Mobile no.</label>
-                                      <input type="text" class="form-control" placeholder="Enter ...">
+                                      <input type="text" name="order_person_mobile" class="form-control" placeholder="Enter ...">
                                     </div>
                                   </div>
                                   <div class="col-sm-6">
                                     <div class="form-group">
                                       <label>Total person</label>
-                                      <input type="number" class="form-control" placeholder="Enter ...">
+                                      <input type="number" name="order_total_person" class="form-control" placeholder="Enter ...">
                                     </div>
                                   </div>
                                   <div class="col-sm-6">
                                     <div class="form-group">
                                       <label>Select Table Number</label>
-                                      <select class="form-control">
+                                      <select name="order_table_no" class="form-control">
                                         <option>Table 1</option>
                                         <option>Table 2</option>
                                         <option>Table 3</option>
@@ -165,7 +187,7 @@
                                   </div>
                                 </div>
                               </div>
-                            </form>
+                            
                           </div>
                           <!-- /.card-body -->
                         </div>
@@ -174,42 +196,45 @@
                         <ul class="list-group">
                           <li class="list-group-item">
                             <div class="form-check">
-                              <input name="default-radio-1" class="form-check-input" type="radio" value=""
+                              <input name="order_payment_method" class="form-check-input" type="radio" value="cashOnDelivery"
                                 id="cashOnDelivery" checked />
                               <label class="form-check-label" for="cashOnDelivery"> Cash on delivery </label>
                             </div>
                           </li>
                           <li class="list-group-item">
                             <div class="form-check">
-                              <input name="default-radio-1" class="form-check-input" type="radio" value="" id="bkash" />
+                              <input name="order_payment_method" class="form-check-input" type="radio" value="bkash" id="bkash" />
                               <label class="form-check-label" for="bkash"> Bkash </label>
                             </div>
                           </li>
                           <li class="list-group-item">
                             <div class="form-check">
-                              <input name="default-radio-1" class="form-check-input" type="radio" value="" id="nogod" />
+                              <input name="order_payment_method" class="form-check-input" type="radio" value="nogod" id="nogod" />
                               <label class="form-check-label" for="nogod"> Nogod </label>
                             </div>
                           </li>
                           <li class="list-group-item">
                             <div class="form-check">
-                              <input name="default-radio-1" class="form-check-input" type="radio" value="" id="card" />
+                              <input name="order_payment_method" class="form-check-input" type="radio" value="card" id="card" />
                               <label class="form-check-label" for="card"> Card </label>
                             </div>
                           </li>
                         </ul>
                       </div>
+                    
                     </div>
                   </div>
+                
                 </div>
               </div>
               <div class="card-footer text-right">
-
-                <button type="button" class="btn btn-primary btn-block">Pay Now</button>
+                <button type="submit" class="btn btn-primary btn-block">Pay Now</button>
               </div>
+            </form>
             </div>
 
           </div>
+          @endif
         </div>
 
         <!-- Main row -->
@@ -241,15 +266,27 @@
                       <th>Order Date</th>
                       <th>Order No.</th>
                       <th>Total Item</th>
+                      <th>Order Status</th>
+                      <th>Payment Status</th>
+                      <th>Total Amount</th>
                     </tr>
                   </thead>
                   <tbody class="table-border-bottom-0">
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00
-                          PM</strong></td>
-                      <td>A-20230301-00001</td>
-                      <td>3 Items</td>
-                    </tr>
+                    @foreach ($orderHistory as $aOrder)
+                      <tr>
+                        <td><i class="text-danger me-3"></i> 
+                            <strong>
+                              {{ $aOrder->created_at }}
+                            </strong>
+                        </td>
+                        <td>{{ $aOrder->order_number }}</td>
+                        <td>{{ $aOrder->total_item }}</td>
+                        <td>{{ $aOrder->order_status }}</td>
+                        <td>{{ $aOrder->payment_status }}</td>
+                        <td>{{ $aOrder->total_amount }}</td>
+                      </tr>
+                    @endforeach
+                    
                   </tbody>
                 </table>
 
@@ -484,18 +521,18 @@
   </div>
 
   <script>
-    const el = document.getElementById('select');
+    const el = document.getElementById('order_position_select');
     const present = document.getElementById('present');
     const takeaway = document.getElementById('takeaway');
     present.style.display = 'block';
     takeaway.style.display = 'none';
     el.addEventListener('change', function handleChange(event) {
       if (event.target.value === 'present') {
-        present.style.display = 'block';
-        takeaway.style.display = 'none';
+      present.style.display = 'block';
+      takeaway.style.display = 'none';
       } else {
-        present.style.display = 'none';
-        takeaway.style.display = 'block';
+      present.style.display = 'none';
+      takeaway.style.display = 'block';
       }
     });
   </script>

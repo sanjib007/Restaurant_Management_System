@@ -28,45 +28,37 @@
       <div class="container-fluid">
         <div class="row">
           <!-- left column -->
+          @if($reviews != null)
           <div class="col-md-12">
+          @foreach ($reviews as $aReview)
             <div class="media">
-              <img src="..." class="mr-3" alt="...">
+              <img style="width: 50px;" src="{{ asset('assets/img/profile/'.$aReview->image) }}" class="mr-3" alt="{{ $aReview->review_name }}">
               <div class="media-body">
-                <h5 class="mt-0">Rahim</h5>
-                <p>Will you do the same for me? It's time to face the music I'm no longer your muse. Heard it's beautiful, be the judge and my girls gonna take a vote. I can feel a phoenix inside of me. Heaven is jealous of our love, angels are crying from up above. Yeah, you take me to utopia.</p>
+                <h5 class="mt-0">{{ $aReview->name }}</h5>
+                <p>{{ $aReview->review_text }}</p>
               </div>
             </div>
-            <div class="media">
-              <img src="..." class="mr-3" alt="...">
-              <div class="media-body">
-                <h5 class="mt-0">Karim</h5>
-                <p>Will you do the same for me? It's time to face the music I'm no longer your muse. Heard it's beautiful, be the judge and my girls gonna take a vote. I can feel a phoenix inside of me. Heaven is jealous of our love, angels are crying from up above. Yeah, you take me to utopia.</p>
-              </div>
-            </div>
-            <div class="media">
-              <img src="..." class="mr-3" alt="...">
-              <div class="media-body">
-                <h5 class="mt-0">Mehedi</h5>
-                <p>Will you do the same for me? It's time to face the music I'm no longer your muse. Heard it's beautiful, be the judge and my girls gonna take a vote. I can feel a phoenix inside of me. Heaven is jealous of our love, angels are crying from up above. Yeah, you take me to utopia.</p>
-              </div>
-            </div>
+          @endforeach
           </div>
+          @endif
           <!--/.col (left) -->
-          <div class="col-md-12">
+          <div class="col-md-12 mt-5">
             <div class="card card-warning">
               <div class="card-header">
                 <h3 class="card-title">Review</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <form>                  
+                <form action="{{ route('review.insert') }}" method="POST">  
+                  @csrf                
                   <div class="row">
                     <div class="col-sm-12">
                       <!-- textarea -->
                       <div class="form-group">
                         <label>Customer review</label>
-                        <textarea class="form-control" rows="3" placeholder="Enter your review..."></textarea>
+                        <textarea class="form-control" rows="3" name="review_text" placeholder="Enter your review..."></textarea>
                       </div>
+                      <button type="submit" class="btn bg-gradient-warning btn-lg">Review</button>
                     </div>                    
                   </div>
                 </form>

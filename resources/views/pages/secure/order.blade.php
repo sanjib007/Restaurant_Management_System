@@ -33,54 +33,33 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
+                @if($completedOrderHistory!= null)                
                 <table class="table">
                   <thead>
                     <tr>
                       <th>Order Date</th>
                       <th>Order No.</th>
                       <th>Total Item</th>
+                      <th>Order Position</th>
                       <th>Payment Status</th>
                       <th>Total Price</th>
                     </tr>
                   </thead>
                   <tbody class="table-border-bottom-0">
+                   
+                    @foreach ($completedOrderHistory as $aOrder)
                     <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00005</td>
-                      <td>5 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
+                      <td><strong>{{ $aOrder->created_at }}</strong></td>
+                      <td>{{ $aOrder->order_number }}</td>
+                      <td>{{ $aOrder->total_item }} Items</td>
+                      <td>{{ $aOrder->order_position }}</td>
+                      <td><span class="{{ $aOrder->payment_status == 'Paid' ? 'badge badge-primary' : 'badge badge-danger' }}">{{ $aOrder->payment_status }}</span></td>
+                      <td>{{ $aOrder->total_amount }}/-</td>
                     </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00004</td>
-                      <td>4 Items</td>
-                      <td><span class="badge badge-danger">Not Paid</span></td>
-                      <td>400/-</td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00003</td>
-                      <td>3 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00002</td>
-                      <td>6 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00001</td>
-                      <td>3 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                    </tr>
+                    @endforeach
                   </tbody>
                 </table>
+                @endif
               </div>
               <!-- /.card-body -->
               <div class="card-footer clearfix">
@@ -108,60 +87,35 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
+                @if($newOrderHistory!= null)                
                 <table class="table">
                   <thead>
                     <tr>
                       <th>Order Date</th>
                       <th>Order No.</th>
                       <th>Total Item</th>
+                      <th>Order Position</th>
                       <th>Payment Status</th>
                       <th>Total Price</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody class="table-border-bottom-0">
+                   
+                    @foreach ($newOrderHistory as $aOrder)
                     <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00005</td>
-                      <td>5 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                      <td><button type="button" class="btn btn-block bg-gradient-warning btn-sm">Make Processing</button></td>
+                      <td><strong>{{ $aOrder->created_at }}</strong></td>
+                      <td>{{ $aOrder->order_number }}</td>
+                      <td>{{ $aOrder->total_item }} Items</td>
+                      <td>{{ $aOrder->order_position }}</td>
+                      <td><span class="{{ $aOrder->payment_status == 'Paid' ? 'badge badge-primary' : 'badge badge-danger' }}">{{ $aOrder->payment_status }}</span></td>
+                      <td>{{ $aOrder->total_amount }}/-</td>
+                      <td><a href="{{ route('order.process', $aOrder->id) }}" class="btn btn-block bg-gradient-warning btn-xs">Make Processing</a></td>
                     </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00004</td>
-                      <td>4 Items</td>
-                      <td><span class="badge badge-danger">Not Paid</span></td>
-                      <td>400/-</td>
-                      <td><button type="button" class="btn btn-block bg-gradient-warning btn-sm">Make Processing</button></td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00003</td>
-                      <td>3 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                      <td><button type="button" class="btn btn-block bg-gradient-warning btn-sm">Make Processing</button></td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00002</td>
-                      <td>6 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                      <td><button type="button" class="btn btn-block bg-gradient-warning btn-sm">Make Processing</button></td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00001</td>
-                      <td>3 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                      <td><button type="button" class="btn btn-block bg-gradient-warning btn-sm">Make Processing</button></td>
-                    </tr>
+                    @endforeach
                   </tbody>
                 </table>
+                @endif
               </div>
               <!-- /.card-body -->
               <div class="card-footer clearfix">
@@ -189,141 +143,35 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
+                @if($processingOrderHistory!= null)                
                 <table class="table">
                   <thead>
                     <tr>
                       <th>Order Date</th>
                       <th>Order No.</th>
                       <th>Total Item</th>
+                      <th>Order Position</th>
                       <th>Payment Status</th>
                       <th>Total Price</th>
-                      <th>Action</th>
+                      <th>Action/th>
                     </tr>
                   </thead>
                   <tbody class="table-border-bottom-0">
+                   
+                    @foreach ($processingOrderHistory as $aOrder)
                     <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00005</td>
-                      <td>5 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                      <td><button type="button" class="btn btn-block bg-gradient-warning btn-sm">Make Complete</button></td>
+                      <td><strong>{{ $aOrder->created_at }}</strong></td>
+                      <td>{{ $aOrder->order_number }}</td>
+                      <td>{{ $aOrder->total_item }} Items</td>
+                      <td>{{ $aOrder->order_position }}</td>
+                      <td><span class="{{ $aOrder->payment_status == 'Paid' ? 'badge badge-primary' : 'badge badge-danger' }}">{{ $aOrder->payment_status }}</span></td>
+                      <td>{{ $aOrder->total_amount }}/-</td>
+                      <td><a href="{{ route('order.complete', $aOrder->id) }}" class="btn btn-block bg-gradient-warning btn-xs">Make Complete</a></td>
                     </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00004</td>
-                      <td>4 Items</td>
-                      <td><span class="badge badge-danger">Not Paid</span></td>
-                      <td>400/-</td>
-                      <td><button type="button" class="btn btn-block bg-gradient-warning btn-sm">Make Complete</button></td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00003</td>
-                      <td>3 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                      <td><button type="button" class="btn btn-block bg-gradient-warning btn-sm">Make Complete</button></td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00002</td>
-                      <td>6 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                      <td><button type="button" class="btn btn-block bg-gradient-warning btn-sm">Make Complete</button></td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00001</td>
-                      <td>3 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                      <td><button type="button" class="btn btn-block bg-gradient-warning btn-sm">Make Complete</button></td>
-                    </tr>
+                    @endforeach
                   </tbody>
                 </table>
-              </div>
-              <!-- /.card-body -->
-              <div class="card-footer clearfix">
-                <ul class="pagination pagination-sm m-0 float-right">
-                  <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-                </ul>
-              </div>
-            </div>
-            <!-- /.card -->
-
-          </div>
-          <!-- /.col -->
-        </div>
-        <!-- /.row -->
-
-        <div class="row">
-          <div class="col-md-12">
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title">Take away Order</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>Order Date</th>
-                      <th>Order No.</th>
-                      <th>Total Item</th>
-                      <th>Payment Status</th>
-                      <th>Total Price</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody class="table-border-bottom-0">
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00005</td>
-                      <td>5 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                      <td><button type="button" class="btn btn-block bg-gradient-warning btn-sm">Make Complete</button></td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00004</td>
-                      <td>4 Items</td>
-                      <td><span class="badge badge-danger">Not Paid</span></td>
-                      <td>400/-</td>
-                      <td><button type="button" class="btn btn-block bg-gradient-warning btn-sm">Make Complete</button></td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00003</td>
-                      <td>3 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                      <td><button type="button" class="btn btn-block bg-gradient-warning btn-sm">Make Complete</button></td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00002</td>
-                      <td>6 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                      <td><button type="button" class="btn btn-block bg-gradient-warning btn-sm">Make Complete</button></td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00001</td>
-                      <td>3 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                      <td><button type="button" class="btn btn-block bg-gradient-warning btn-sm">Make Complete</button></td>
-                    </tr>
-                  </tbody>
-                </table>
+                @endif
               </div>
               <!-- /.card-body -->
               <div class="card-footer clearfix">

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Order;
+use App\Models\Review;
 use App\Models\Role;
 use App\Models\User;
 //use Illuminate\Contracts\Session\Session;
@@ -59,9 +61,8 @@ class AuthenticatedController extends Controller
             'password' => 'min:6|required_with:confirm_Password|same:confirm_Password',
             'confirm_Password' => 'min:6'
         ]);
-
+        $imageName = '';
         if($request->has('image')){
-            $imageName = '';
             if($image = $request->file('image')){      
               $imageName = time()."-".$image->getClientOriginalName();      
               $image->move("assets/img/profile", $imageName);
@@ -90,6 +91,32 @@ class AuthenticatedController extends Controller
             return redirect()->route('user')->withSuccess('Great! You have Successfully loggedin');
          }
         
+    }
+
+    public function userImageUpload(Request $request){
+        $request->validate([
+            'user_image' => 'required',
+            'user_id' => 'required',
+        ]);
+
+        $getUser = User::findorfail($request->user_id);
+
+        $imageName = '';
+
+        $newImage = $request->file('user_image');
+
+        if($newImage != ''){
+            if(file_exists($getUser->image)){
+                File::delete($getUser->image);
+            }
+            $imageName = time()."-".$newImage->getClientOriginalName();
+            $newImage->move("assets/img/profile", $imageName);
+        }
+        $getUser->update([
+            'image' => $imageName
+        ]);
+
+        return redirect()->route('profile')->withSuccess('Great! You have Successfully.');
     }
     
     public function editUser($id){
@@ -161,7 +188,16 @@ class AuthenticatedController extends Controller
     public function dashboard()
     {
         if(Auth::check()){
-            return view('pages.secure.dashboard');
+
+            $getAllItem = Session::get('orderedItem');
+            if(Auth::user()->roles->pluck('name')[0] == "admin"){
+                $orderHistory = Order::orderBy('id', 'desc')->get();
+                //dd($orderHistory);
+            }else{
+                $orderHistory = Order::orderBy('id', 'desc')->where('user_id', '=', Auth::user()->id)->get();
+            }            
+
+            return view('pages.secure.dashboard', compact('getAllItem', 'orderHistory'));
         }
         return redirect("login")->withSuccess('Opps! You do not have access');
     }
@@ -174,7 +210,9 @@ class AuthenticatedController extends Controller
     public function profile()
     {
         if(Auth::check()){
-            return view('pages.secure.profile');
+            $orderHistory = Order::orderBy('id', 'desc')->where('user_id', '=', Auth::user()->id)->get();
+            $reviews = DB::select('SELECT r.id as reviewId, r.review_text, r.review_name, u.image, u.name FROM reviews r INNER JOIN users u on u.id = r.user_id WHERE u.id = '.Auth::user()->id.' ORDER BY r.id DESC LIMIT 20');
+            return view('pages.secure.profile', compact('orderHistory', 'reviews'));
         }
         return redirect("login")->withSuccess('Opps! You do not have access');
     }
@@ -182,7 +220,30 @@ class AuthenticatedController extends Controller
     public function order()
     {
         if(Auth::check()){
-            return view('pages.secure.order');
+
+            $newOrderHistory = Order::orderBy('id', 'desc')->where('order_status', '=', 'New')->get();
+            $processingOrderHistory = Order::orderBy('id', 'desc')->where('order_status', '=', 'processing')->get();
+            $completedOrderHistory = Order::orderBy('id', 'desc')->where('order_status', '=', 'Completed')->get();
+            return view('pages.secure.order', compact('newOrderHistory', 'processingOrderHistory', 'completedOrderHistory'));
+
+        }
+        return redirect("login")->withSuccess('Opps! You do not have access');
+    }
+
+    public function reviewInsert(Request $request)
+    {
+        if(Auth::check()){
+            $request->validate([
+                'review_text' => 'required'
+            ]);
+
+            Review::create([
+                'review_text' => $request->review_text,
+                'review_name' => Auth::user()->name,
+                'user_id' => Auth::user()->id
+            ]);           
+
+            return redirect()->route('review')->withSuccess('Review Insert Successfull.');;
         }
         return redirect("login")->withSuccess('Opps! You do not have access');
     }
@@ -190,7 +251,9 @@ class AuthenticatedController extends Controller
     public function review()
     {
         if(Auth::check()){
-            return view('pages.secure.review');
+
+            $reviews = DB::select('SELECT r.id as reviewId, r.review_text, r.review_name, u.image, u.name FROM reviews r INNER JOIN users u on u.id = r.user_id ORDER BY r.id DESC LIMIT 20');
+            return view('pages.secure.review', compact('reviews'));
         }
         return redirect("login")->withSuccess('Opps! You do not have access');
     }
@@ -203,7 +266,7 @@ class AuthenticatedController extends Controller
         }
         return redirect("login")->withSuccess('Opps! You do not have access');
     }
-    public function userinsert()
+    public function userShow()
     {
         if(Auth::check()){
 

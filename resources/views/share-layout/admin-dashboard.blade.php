@@ -105,6 +105,7 @@
                 <!-- /.card-tools -->
               </div>
               <div class="card-body">
+                @if($orderHistory!= null)                
                 <table class="table">
                   <thead>
                     <tr>
@@ -116,44 +117,19 @@
                     </tr>
                   </thead>
                   <tbody class="table-border-bottom-0">
+                   
+                    @foreach ($orderHistory as $aOrder)
                     <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00005</td>
-                      <td>5 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
+                      <td><strong>{{ $aOrder->created_at }}</strong></td>
+                      <td>{{ $aOrder->order_number }}</td>
+                      <td>{{ $aOrder->total_item }} Items</td>
+                      <td><span class="{{ $aOrder->payment_status == 'Paid' ? 'badge badge-primary' : 'badge badge-primary' }}">{{ $aOrder->payment_status }}</span></td>
+                      <td>{{ $aOrder->total_amount }}/-</td>
                     </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00004</td>
-                      <td>4 Items</td>
-                      <td><span class="badge badge-danger">Not Paid</span></td>
-                      <td>400/-</td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00003</td>
-                      <td>3 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00002</td>
-                      <td>6 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                    </tr>
-                    <tr>
-                      <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>1st March, 2023 07:00:00 PM</strong></td>
-                      <td>A-20230301-00001</td>
-                      <td>3 Items</td>
-                      <td><span class="badge badge-primary">Paid</span></td>
-                      <td>400/-</td>
-                    </tr>
+                    @endforeach
                   </tbody>
                 </table>
-
+                @endif
               </div>
               <!-- /.card-body-->
             </div>

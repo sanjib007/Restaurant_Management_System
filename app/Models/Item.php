@@ -11,6 +11,10 @@ class Item extends Model
 {
     use HasFactory;
 
+    public $primarykey = 'id';
+    protected $table = 'items';
+    public $timestamps = false;
+
     protected $fillable = [
         'item_name',
         'item_description',
@@ -19,13 +23,18 @@ class Item extends Model
         'category_id'
     ];
 
-    public function category(): BelongsTo
+    public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id', 'id');
     }
 
     public function item_prices(): HasMany
     {
         return $this->hasMany(Item_Price::class);
+    }
+
+    public function order_details(): HasMany
+    {
+        return $this->hasMany(order_details::class);
     }
 }
