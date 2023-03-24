@@ -129,6 +129,7 @@
                     @endforeach
                   </tbody>
                 </table>
+                {{ $orderHistory->links() }}
                 @endif
               </div>
               <!-- /.card-body-->

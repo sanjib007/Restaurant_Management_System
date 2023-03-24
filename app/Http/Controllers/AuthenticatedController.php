@@ -191,10 +191,10 @@ class AuthenticatedController extends Controller
 
             $getAllItem = Session::get('orderedItem');
             if(Auth::user()->roles->pluck('name')[0] == "admin"){
-                $orderHistory = Order::orderBy('id', 'desc')->get();
+                $orderHistory = Order::orderBy('id', 'desc')->paginate(7);
                 //dd($orderHistory);
             }else{
-                $orderHistory = Order::orderBy('id', 'desc')->where('user_id', '=', Auth::user()->id)->get();
+                $orderHistory = Order::orderBy('id', 'desc')->where('user_id', '=', Auth::user()->id)->paginate(7);
             }            
 
             return view('pages.secure.dashboard', compact('getAllItem', 'orderHistory'));
@@ -210,7 +210,7 @@ class AuthenticatedController extends Controller
     public function profile()
     {
         if(Auth::check()){
-            $orderHistory = Order::orderBy('id', 'desc')->where('user_id', '=', Auth::user()->id)->get();
+            $orderHistory = Order::orderBy('id', 'desc')->where('user_id', '=', Auth::user()->id)->paginate(7);
             $reviews = DB::select('SELECT r.id as reviewId, r.review_text, r.review_name, u.image, u.name FROM reviews r INNER JOIN users u on u.id = r.user_id WHERE u.id = '.Auth::user()->id.' ORDER BY r.id DESC LIMIT 20');
             return view('pages.secure.profile', compact('orderHistory', 'reviews'));
         }
@@ -221,9 +221,9 @@ class AuthenticatedController extends Controller
     {
         if(Auth::check()){
 
-            $newOrderHistory = Order::orderBy('id', 'desc')->where('order_status', '=', 'New')->get();
-            $processingOrderHistory = Order::orderBy('id', 'desc')->where('order_status', '=', 'processing')->get();
-            $completedOrderHistory = Order::orderBy('id', 'desc')->where('order_status', '=', 'Completed')->get();
+            $newOrderHistory = Order::orderBy('id', 'desc')->where('order_status', '=', 'New')->paginate(7, '*', 'new');
+            $processingOrderHistory = Order::orderBy('id', 'desc')->where('order_status', '=', 'processing')->paginate(7, '*', 'processing');
+            $completedOrderHistory = Order::orderBy('id', 'desc')->whereIn('order_status', array('Completed','Cancel'))->paginate(7, '*', 'completed');
             return view('pages.secure.order', compact('newOrderHistory', 'processingOrderHistory', 'completedOrderHistory'));
 
         }

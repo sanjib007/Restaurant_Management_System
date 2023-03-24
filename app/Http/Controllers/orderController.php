@@ -13,15 +13,6 @@ use Session;
 class orderController extends Controller
 {
     public function submitOrder(Request $request){
-    //   "order_position" => "present"
-    //   "order_contact_name" => null
-    //   "order_contact_mobile" => null
-    //   "order_contact_address" => null
-    //   "order_person_name" => "sanjib Dhar"
-    //   "order_person_mobile" => "01756307427"
-    //   "order_total_person" => "6"
-    //   "order_table_no" => "Table 3"
-    //   "order_payment_method" => "bkash"
 
         if($request->order_position == 'present'){
             $request->validate([
@@ -118,6 +109,20 @@ class orderController extends Controller
     public function submitOrderComplete($id){
         $order = Order::findorfail($id)->update([
             'order_status' => 'Completed'
+        ]);
+        return redirect()->route('order')->withSuccess('Great! You have Successfully order');
+    }
+
+    public function orderPaid($id){
+        $order = Order::findorfail($id)->update([
+            'payment_status' => 'Paid'
+        ]);
+        return redirect()->route('order')->withSuccess('Great! You have Successfully order');
+    }
+
+    public function orderCancel($id){
+        $order = Order::findorfail($id)->update([
+            'order_status' => 'Cancel'
         ]);
         return redirect()->route('order')->withSuccess('Great! You have Successfully order');
     }

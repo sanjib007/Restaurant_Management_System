@@ -78,3 +78,5 @@ Route::post('changeItemQuantity', [ItemController::class, 'changeItemQuantity'])
 Route::post('submitOrder', [orderController::class, 'submitOrder'])->name('order.submitOrder');
 Route::get('submitOrderProcess/{id}', [orderController::class, 'submitOrderProcess'])->name('order.process');
 Route::get('submitOrderComplete/{id}', [orderController::class, 'submitOrderComplete'])->name('order.complete');
+Route::get('orderPaid/{id}', [orderController::class, 'orderPaid'])->name('order.paid');
+Route::get('orderCancel/{id}', [orderController::class, 'orderCancel'])->name('order.cancel');

@@ -120,7 +120,7 @@ $('#orderSubmit').click(()=>{
 		$('#setTotalItem').text(data.length);
 		$('#orderItem').val("");
 		$('#modal-default').modal('toggle');
-		$.notify("Your food request is added. Choose another one", "success");
+		$.notify("Your food request is added. Choose another one", { globalPosition: 'top middle'}, "success");
 	   }
 	});
 });

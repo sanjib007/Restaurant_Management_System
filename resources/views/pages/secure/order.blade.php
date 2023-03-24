@@ -41,8 +41,10 @@
                       <th>Order No.</th>
                       <th>Total Item</th>
                       <th>Order Position</th>
+                      <th>Order Status</th>
                       <th>Payment Status</th>
                       <th>Total Price</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody class="table-border-bottom-0">
@@ -53,8 +55,16 @@
                       <td>{{ $aOrder->order_number }}</td>
                       <td>{{ $aOrder->total_item }} Items</td>
                       <td>{{ $aOrder->order_position }}</td>
-                      <td><span class="{{ $aOrder->payment_status == 'Paid' ? 'badge badge-primary' : 'badge badge-danger' }}">{{ $aOrder->payment_status }}</span></td>
+                      <td>{{ $aOrder->order_status }}</td>
+                      <td>
+                        <span class="{{ $aOrder->payment_status == 'Paid' ? 'badge badge-primary' : 'badge badge-danger' }}">{{ $aOrder->payment_status }}</span>
+                      </td>
                       <td>{{ $aOrder->total_amount }}/-</td>
+                      <td>
+                        @if ($aOrder->payment_status == 'Not Paid' && $aOrder->order_status != 'Cancel')
+                          <a href="{{ route('order.paid', $aOrder->id) }}" class="btn btn-block bg-gradient-warning btn-xs">Paid</a>
+                        @endif
+                      </td>
                     </tr>
                     @endforeach
                   </tbody>
@@ -63,13 +73,7 @@
               </div>
               <!-- /.card-body -->
               <div class="card-footer clearfix">
-                <ul class="pagination pagination-sm m-0 float-right">
-                  <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-                </ul>
+                {{ $completedOrderHistory->links() }}
               </div>
             </div>
             <!-- /.card -->
@@ -110,7 +114,10 @@
                       <td>{{ $aOrder->order_position }}</td>
                       <td><span class="{{ $aOrder->payment_status == 'Paid' ? 'badge badge-primary' : 'badge badge-danger' }}">{{ $aOrder->payment_status }}</span></td>
                       <td>{{ $aOrder->total_amount }}/-</td>
-                      <td><a href="{{ route('order.process', $aOrder->id) }}" class="btn btn-block bg-gradient-warning btn-xs">Make Processing</a></td>
+                      <td>
+                        <a href="{{ route('order.process', $aOrder->id) }}" class="btn btn-block bg-gradient-warning btn-xs">Make Processing</a>
+                        <a href="{{ route('order.cancel', $aOrder->id) }}" class="btn btn-block bg-gradient-danger btn-xs">Order Cancel</a>
+                      </td>
                     </tr>
                     @endforeach
                   </tbody>
@@ -119,13 +126,7 @@
               </div>
               <!-- /.card-body -->
               <div class="card-footer clearfix">
-                <ul class="pagination pagination-sm m-0 float-right">
-                  <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-                </ul>
+                {{ $newOrderHistory->links() }}
               </div>
             </div>
             <!-- /.card -->
@@ -175,13 +176,7 @@
               </div>
               <!-- /.card-body -->
               <div class="card-footer clearfix">
-                <ul class="pagination pagination-sm m-0 float-right">
-                  <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-                </ul>
+                {{ $processingOrderHistory->links() }}
               </div>
             </div>
             <!-- /.card -->

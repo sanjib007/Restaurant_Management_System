@@ -269,6 +269,7 @@
                       <th>Order Status</th>
                       <th>Payment Status</th>
                       <th>Total Amount</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody class="table-border-bottom-0">
@@ -284,12 +285,17 @@
                         <td>{{ $aOrder->order_status }}</td>
                         <td>{{ $aOrder->payment_status }}</td>
                         <td>{{ $aOrder->total_amount }}</td>
+                        <td>
+                          @if($aOrder->order_status == 'New')
+                            <a href="{{ route('order.cancel', $aOrder->id) }}" class="btn btn-block bg-gradient-danger btn-xs">Order Cancel</a>
+                          @endif
+                        </td>
                       </tr>
                     @endforeach
                     
                   </tbody>
                 </table>
-
+                {{ $orderHistory->links() }}
               </div>
               <!-- /.card-body-->
             </div>
