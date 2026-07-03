@@ -23,12 +23,18 @@
   <!-- Sidebar -->
   <div class="sidebar">
     <!-- Sidebar user panel (optional) -->
-    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-      <div class="image">
-        <img src="{{asset('assets/dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
+      <div class="image mr-2" style="width:52px; height:52px;">
+        <img class="profile-user-img img-fluid img-circle elevation-2"
+             src="{{ asset('assets/img/profile/' . Auth::user()->image) }}"
+             alt="{{ Auth::user()->name }}"
+             style="width:100%; height:100%; object-fit:cover; object-position:center; border:2px solid rgba(255,255,255,0.35);">
       </div>
       <div class="info">
-        <a href="#" class="d-block">{{ Auth::user()->name }} ({{ Auth::user()->roles->pluck('name')[0] }})</a>
+        <a href="#" class="d-block text-white font-weight-semibold" style="font-size:0.95rem; line-height:1.2;">
+          {{ Auth::user()->name }}<br>
+          <small class="text-light" style="font-size:0.8rem;">{{ Auth::user()->roles->pluck('name')[0] }}</small>
+        </a>
       </div>
     </div>
 

@@ -211,7 +211,7 @@ class AuthenticatedController extends Controller
     {
         if(Auth::check()){
             $orderHistory = Order::orderBy('id', 'desc')->where('user_id', '=', Auth::user()->id)->paginate(7);
-            $reviews = DB::select('SELECT r.id as reviewId, r.review_text, r.review_name, u.image, u.name FROM reviews r INNER JOIN users u on u.id = r.user_id WHERE u.id = '.Auth::user()->id.' ORDER BY r.id DESC LIMIT 20');
+            $reviews = DB::select('SELECT r.id as reviewId, r.review_text, r.review_name, r.created_at, u.image, u.name FROM reviews r INNER JOIN users u on u.id = r.user_id WHERE u.id = '.Auth::user()->id.' ORDER BY r.id DESC LIMIT 20');
             return view('pages.secure.profile', compact('orderHistory', 'reviews'));
         }
         return redirect("login")->withSuccess('Opps! You do not have access');

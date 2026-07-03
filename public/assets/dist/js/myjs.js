@@ -80,7 +80,7 @@ $('#orderSubmit').click(()=>{
 	console.log('id', id, '/ total', totalItem);
 	$.ajax({
 	   type:'POST',
-	   url:"setOrder",
+	   url:'/setOrder',
 	   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
 	   data:{id:id, totalItem:totalItem},
 	   success:function(data){
