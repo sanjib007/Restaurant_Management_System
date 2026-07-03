@@ -1,4 +1,37 @@
 
+<style>
+  .top-nav-icon {
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #495057;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid rgba(0,0,0,0.08);
+    transition: all 0.2s ease;
+    margin-left: 0.35rem;
+  }
+  .top-nav-icon:hover {
+    background: #ffffff;
+    color: #212529;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  }
+  .navbar-badge-top {
+    position: absolute;
+    top: 1px;
+    right: 6px;
+    font-size: 0.65rem;
+    min-width: 18px;
+    padding: 0 5px;
+  }
+  .nav-item.dropdown {
+    position: relative;
+  }
+</style>
+
 <!-- Left navbar links -->
 <ul class="navbar-nav">
   @if (!Request::is('/'))
@@ -19,13 +52,11 @@
 
 
 <!-- Right navbar links -->
-<ul class="navbar-nav ml-auto">
-    <!-- Messages Dropdown Menu -->
-    
+<ul class="navbar-nav ml-auto align-items-center">
     <li class="nav-item dropdown">
-      <a class="nav-link" data-toggle="dropdown" href="#">
-        <i class="far fa-comments"></i>
-        <span id="setTotalItem" class="badge badge-danger navbar-badge">6</span>
+      <a class="nav-link top-nav-icon position-relative" data-toggle="dropdown" href="#" title="Cart">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="setTotalItem" class="badge badge-danger navbar-badge navbar-badge-top">6</span>
       </a>
       <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
         <div id="appendItemData"></div>
@@ -34,27 +65,24 @@
     </li>
       @auth
       <li class="nav-item">
-          <a href="{{ route('home') }}" class="nav-link">
+          <a href="{{ route('home') }}" class="nav-link top-nav-icon" title="Dashboard">
               <i class="fas fa-home"></i>
           </a>
       </li>
       <li class="nav-item">
-          <a href="{{ route('logout') }}" class="nav-link">
+          <a href="{{ route('logout') }}" class="nav-link top-nav-icon" title="Logout">
               <i class="fas fa-power-off"></i>
           </a>
       </li>            
-          
       @else
           <li class="nav-item">
-              <a href="{{ route('login') }}" class="nav-link">
+              <a href="{{ route('login') }}" class="nav-link top-nav-icon" title="Login">
                   <i class="fas fa-sign-in-alt"></i>
               </a>
           </li>  
-          
-
           @if (Route::has('register'))
           <li class="nav-item">
-              <a href="{{ route('register') }}" class="nav-link">
+              <a href="{{ route('register') }}" class="nav-link top-nav-icon" title="Register">
                   <i class="fas fa-registered"></i>
               </a>
           </li>
