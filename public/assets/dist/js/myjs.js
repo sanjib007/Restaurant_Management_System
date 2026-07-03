@@ -60,7 +60,7 @@ $.ajax({
 
 jQuery('body').on('click', '.test_click', function () {
 	var link_id = $(this).val();
-	$.get('getItem/' + link_id, function (data) {
+	$.get('/getItem/' + link_id, function (data) {
 		jQuery('#item_id').val(data.id);
 		jQuery('#item_name').text(data.item_name);
 		jQuery('#item_price').text(data.item_price);

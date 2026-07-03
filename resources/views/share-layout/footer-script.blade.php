@@ -11,14 +11,10 @@
 
 <!-- Ekko Lightbox -->
 <script src="{{asset('assets/plugins/ekko-lightbox/ekko-lightbox.min.js')}}"></script>
-<!-- AdminLTE App -->
-<script src="{{asset('assets/dist/js/adminlte.min.js')}}"></script>
 <!-- Filterizr-->
 <script src="{{asset('assets/plugins/filterizr/jquery.filterizr.min.js')}}"></script>
 <!-- Page specific script -->
 
-<!-- jQuery -->
-<script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
 <!-- ChartJS -->
 <script src="{{asset('assets/plugins/chart.js/Chart.min.js')}}"></script>
 <!-- Sparkline 

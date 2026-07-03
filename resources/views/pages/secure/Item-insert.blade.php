@@ -238,4 +238,15 @@
   </div>
   <!-- /.content-wrapper -->
 
+  @push('scripts')
+  <script>
+    $(function () {
+      $('#item_description').summernote({
+        placeholder: 'Food Details',
+        height: 200,
+      });
+    });
+  </script>
+  @endpush
+
 @stop

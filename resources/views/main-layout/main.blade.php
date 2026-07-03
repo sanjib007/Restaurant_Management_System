@@ -35,6 +35,7 @@
 
 @include('share-layout.footer-script')
 
+@stack('scripts')
 
 </body>
 </html>

@@ -20,11 +20,10 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::get('/', function () {
-    return view('pages.guest.home');
-})->name('welcome');
+Route::get('/', [AuthenticatedController::class, 'show_food'])->name('welcome');
 
 Route::get('/ourMenu', [ItemController::class, 'showOurMenu'])->name('our.menu');
+Route::get('/item/{id}', [ItemController::class, 'showItemDetail'])->name('item.detail');
 
 Route::get('/contact', function () {
     return view('pages.guest.contact');
@@ -63,6 +62,12 @@ Route::post('category-insert', [CategoryController::class, 'categoryInsert'])->n
 Route::get('category-edit/{id}', [CategoryController::class, 'categoryEdit'])->name('category.edit');
 Route::post('category-update/{id}', [CategoryController::class, 'categoryUpdate'])->name('category.update');
 Route::get('category-delete/{id}', [CategoryController::class, 'categoryDelete'])->name('category.delete');
+
+Route::get('slider', [App\Http\Controllers\SliderController::class, 'index'])->name('slider.index');
+Route::post('slider', [App\Http\Controllers\SliderController::class, 'store'])->name('slider.store');
+Route::get('slider/{id}/edit', [App\Http\Controllers\SliderController::class, 'edit'])->name('slider.edit');
+Route::post('slider/{id}', [App\Http\Controllers\SliderController::class, 'update'])->name('slider.update');
+Route::get('slider/{id}/delete', [App\Http\Controllers\SliderController::class, 'destroy'])->name('slider.destroy');
 
 Route::post('item-insert', [ItemController::class, 'itemInsert'])->name('item.insert');
 Route::get('item-edit/{id}', [ItemController::class, 'itemEdit'])->name('item.edit');

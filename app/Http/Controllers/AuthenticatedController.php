@@ -313,6 +313,7 @@ class AuthenticatedController extends Controller
     }
 
     public function show_food(){
-       return view('pages.guest.food');
+       $sliders = \App\Models\Slider::where('is_active', true)->orderBy('sort_order')->get();
+       return view('pages.guest.home', compact('sliders'));
     }
 }

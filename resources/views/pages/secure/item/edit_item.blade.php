@@ -84,7 +84,8 @@
                                             <img src="{{ asset('assets/img/items/'.$item->item_image) }}"
                                                 width="100px" />
                                             <input type="file" name="item_image" class="form-control" id="item_image"
-                                                placeholder="Upload Image" required>
+                                                placeholder="Upload Image">
+                                            <small class="form-text text-muted">Leave blank to keep the current image.</small>
                                             @if ($errors->has('item_image'))
                                             <span class="text-danger">{{ $errors->first('item_image') }}</span>
                                             @endif
@@ -110,5 +111,14 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-
+  @push('scripts')
+  <script>
+    $(function () {
+      $('#item_description').summernote({
+        placeholder: 'Food Details',
+        height: 200,
+      });
+    });
+  </script>
+  @endpush
 @stop

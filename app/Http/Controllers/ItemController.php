@@ -48,17 +48,15 @@ class ItemController extends Controller
         $request->validate([
             'item_name' => 'required',
             'item_description' => 'required',
-            'item_image' => 'required',
+            'item_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'item_price' => 'required',
             'category_id' => 'required',
         ]);
 
-        $imageName = '';
+        $imageName = $item->item_image;
         if($image = $request->file('item_image')){      
             $imageName = time()."-".$image->getClientOriginalName();      
             $image->move("assets/img/items", $imageName);    
-        }else{
-            $imageName = $item->category_image;
         }
 
         $cat = Item::where('id', $id)->update([
@@ -95,6 +93,12 @@ class ItemController extends Controller
     {
         $item = Item::find($id);
         return response()->json($item);
+    }
+
+    public function showItemDetail($id)
+    {
+        $item = Item::findOrFail($id);
+        return view('pages.guest.item_detail', compact('item'));
     }
 
     public function getAllSessionItem()

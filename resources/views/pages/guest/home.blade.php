@@ -11,32 +11,20 @@
         <div class="col-sm-12">
           <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
-              <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-              <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-              <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+              @foreach($sliders as $index => $slider)
+              <li data-target="#carouselExampleIndicators" data-slide-to="{{ $index }}" class="{{ $index == 0 ? 'active' : '' }}"></li>
+              @endforeach
             </ol>
             <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img class="d-block w-100" src="{{ asset('assets/img/slider/1.jpg') }}" alt="First slide">
-              <div class="carousel-caption d-none d-md-block">
-              <h5>Your First Choice</h5>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit sed do eiusmod tempor.</p>
+              @foreach($sliders as $index => $slider)
+              <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                <img class="d-block w-100" src="{{ asset('assets/img/slider/'.$slider->image) }}" alt="Slide {{ $index + 1 }}">
+                <div class="carousel-caption d-none d-md-block">
+                  <h5>{{ $slider->title ?? 'Your First Choice' }}</h5>
+                  <p>{!! $slider->subtitle ?? 'Lorem ipsum dolor sit amet, consectetur adipisicing elit sed do eiusmod tempor.' !!}</p>
+                </div>
               </div>
-              </div>
-              <div class="carousel-item">
-                <img class="d-block w-100" src="{{ asset('assets/img/slider/2.jpg') }}" alt="Second slide">
-              <div class="carousel-caption d-none d-md-block">
-              <h5>Your First Choice</h5>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit sed do eiusmod tempor.</p>
-              </div>
-              </div>
-              <div class="carousel-item">
-                <img class="d-block w-100" src="{{ asset('assets/img/slider/3.jpg') }}" alt="Third slide">
-              <div class="carousel-caption d-none d-md-block">
-              <h5>Your First Choice</h5>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit sed do eiusmod tempor.</p>
-              </div>
-              </div>
+              @endforeach
             </div>
             <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -47,7 +35,6 @@
               <span class="sr-only">Next</span>
             </a>
           </div>
-          
 
         </div>
       </div>

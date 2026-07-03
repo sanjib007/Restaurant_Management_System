@@ -80,6 +80,12 @@
           </a>
         </li>
         <li class="nav-item">
+          <a href="{{ route('slider.index') }}" class="nav-link">
+            <i class="nav-icon far fa-circle text-warning"></i>
+            <p>Slider Manager</p>
+          </a>
+        </li>
+        <li class="nav-item">
           <a href="{{ route('user') }}" class="nav-link">
             <i class="nav-icon far fa-circle text-warning"></i>
             <p>User Insert</p>
