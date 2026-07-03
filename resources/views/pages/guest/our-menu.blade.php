@@ -142,6 +142,51 @@
     <p>Explore our hand-picked dishes, beautifully presented with full ingredient details and easy ordering.</p>
   </div>
 
+  {{-- ─── Search & Filter Section ─── --}}
+  <div class="card mb-4" style="border-radius: 16px; border: 1px solid #e9ecef; box-shadow: 0 8px 30px rgba(0,0,0,0.05); background: #ffffff;">
+    <div class="card-body p-4">
+      <form method="GET" action="{{ route('our.menu') }}">
+        <div class="row align-items-end">
+          <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
+            <label class="font-weight-bold mb-1" style="font-size:.82rem;text-transform:uppercase;letter-spacing:.5px;color:#495057;">Search Dish / Item</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text bg-light border-right-0" style="border-radius:10px 0 0 10px;"><i class="fas fa-search text-muted"></i></span>
+              </div>
+              <input type="text" name="search_name" class="form-control bg-light border-left-0" style="border-radius:0 10px 10px 0;" placeholder="Search by name..." value="{{ $searchName ?? '' }}">
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+            <label class="font-weight-bold mb-1" style="font-size:.82rem;text-transform:uppercase;letter-spacing:.5px;color:#495057;">Price Range (৳)</label>
+            <div class="d-flex align-items-center">
+              <input type="number" step="any" name="min_price" class="form-control bg-light text-center" style="border-radius:10px;" placeholder="Min" value="{{ $minPrice ?? '' }}">
+              <span class="mx-2 text-muted font-weight-bold">—</span>
+              <input type="number" step="any" name="max_price" class="form-control bg-light text-center" style="border-radius:10px;" placeholder="Max" value="{{ $maxPrice ?? '' }}">
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+            <label class="font-weight-bold mb-1" style="font-size:.82rem;text-transform:uppercase;letter-spacing:.5px;color:#495057;">Sort By</label>
+            <select name="sort_by" class="form-control bg-light" style="border-radius:10px;">
+              <option value="id_desc" {{ ($sortBy ?? '') == 'id_desc' ? 'selected' : '' }}>Default Sorting</option>
+              <option value="name_asc" {{ ($sortBy ?? '') == 'name_asc' ? 'selected' : '' }}>Name (A to Z)</option>
+              <option value="name_desc" {{ ($sortBy ?? '') == 'name_desc' ? 'selected' : '' }}>Name (Z to A)</option>
+              <option value="price_asc" {{ ($sortBy ?? '') == 'price_asc' ? 'selected' : '' }}>Price (Low to High)</option>
+              <option value="price_desc" {{ ($sortBy ?? '') == 'price_desc' ? 'selected' : '' }}>Price (High to Low)</option>
+            </select>
+          </div>
+          <div class="col-lg-2 col-md-6 d-flex" style="gap:8px;">
+            <button type="submit" class="btn btn-info flex-fill" style="border-radius:10px;font-weight:600;min-height:42px;">
+              <i class="fas fa-filter mr-1"></i> Filter
+            </button>
+            <a href="{{ route('our.menu') }}" class="btn btn-outline-secondary d-flex align-items-center justify-content-center" style="border-radius:10px;width:42px;min-height:42px;" title="Reset Filters">
+              <i class="fas fa-redo"></i>
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div class="menu-tabs">
     <ul class="nav nav-pills justify-content-center" id="menuTab" role="tablist">
       <li class="nav-item" role="presentation">
@@ -158,8 +203,10 @@
   <div class="tab-content" id="menuTabContent">
     <div class="tab-pane fade show active" id="pane-all" role="tabpanel" aria-labelledby="tab-all">
       <div class="row">
+        @php $totalItemsCount = 0; @endphp
         @foreach ($categories as $aCat)
           @foreach ($aCat->items as $aItem)
+          @php $totalItemsCount++; @endphp
           <div class="col-12 col-sm-6 col-lg-4 mb-4" id="test{{ $aItem->id }}">
             <div class="menu-card h-100">
               <img src="{{ asset('assets/img/items/'.$aItem->item_image) }}" alt="{{ $aItem->item_name }}" class="menu-card-img">
@@ -182,34 +229,50 @@
           </div>
           @endforeach
         @endforeach
+        @if($totalItemsCount == 0)
+          <div class="col-12 text-center py-5">
+            <i class="fas fa-utensils fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted font-weight-bold">No dishes found matching your search.</h5>
+            <p class="text-muted mb-3">Try adjusting your keyword or price range filter.</p>
+            <a href="{{ route('our.menu') }}" class="btn btn-sm btn-info" style="border-radius:20px;padding:6px 18px;">Reset Filters</a>
+          </div>
+        @endif
       </div>
     </div>
 
     @foreach ($categories as $aCat)
     <div class="tab-pane fade" id="pane-category-{{ $aCat->id }}" role="tabpanel" aria-labelledby="tab-category-{{ $aCat->id }}">
       <div class="row">
-        @foreach ($aCat->items as $aItem)
-        <div class="col-12 col-sm-6 col-lg-4 mb-4" id="test{{ $aItem->id }}">
-          <div class="menu-card h-100">
-            <img src="{{ asset('assets/img/items/'.$aItem->item_image) }}" alt="{{ $aItem->item_name }}" class="menu-card-img">
-            <div class="menu-card-body">
-              <h5>{{ $aItem->item_name }}</h5>
-              <p class="mb-2">Price: <span class="about">{{ $aItem->item_price }}/-</span></p>
-              <p class="card-text ellipsis">{{ \Illuminate\Support\Str::limit(strip_tags($aItem->item_description), 80) }}</p>
-            </div>
-            <div class="menu-card-footer">
-              <div class="menu-buttons">
-                <a href="{{ route('item.detail', $aItem->id) }}" class="btn btn-info btn-sm menu-action-btn">
-                  <i class="fas fa-eye"></i> View Details
-                </a>
-                <button type="button" value="{{ $aItem->id }}" class="btn btn-outline-info btn-sm menu-action-btn test_click" data-toggle="modal" data-target="#modal-default">
-                  <i class="fas fa-shopping-cart"></i> Order Now
-                </button>
+        @if($aCat->items->count() > 0)
+          @foreach ($aCat->items as $aItem)
+          <div class="col-12 col-sm-6 col-lg-4 mb-4" id="test{{ $aItem->id }}">
+            <div class="menu-card h-100">
+              <img src="{{ asset('assets/img/items/'.$aItem->item_image) }}" alt="{{ $aItem->item_name }}" class="menu-card-img">
+              <div class="menu-card-body">
+                <h5>{{ $aItem->item_name }}</h5>
+                <p class="mb-2">Price: <span class="about">{{ $aItem->item_price }}/-</span></p>
+                <p class="card-text ellipsis">{{ \Illuminate\Support\Str::limit(strip_tags($aItem->item_description), 80) }}</p>
+              </div>
+              <div class="menu-card-footer">
+                <div class="menu-buttons">
+                  <a href="{{ route('item.detail', $aItem->id) }}" class="btn btn-info btn-sm menu-action-btn">
+                    <i class="fas fa-eye"></i> View Details
+                  </a>
+                  <button type="button" value="{{ $aItem->id }}" class="btn btn-outline-info btn-sm menu-action-btn test_click" data-toggle="modal" data-target="#modal-default">
+                    <i class="fas fa-shopping-cart"></i> Order Now
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        @endforeach
+          @endforeach
+        @else
+          <div class="col-12 text-center py-5">
+            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted font-weight-bold">No dishes found in {{ $aCat->category_name }}.</h5>
+            <p class="text-muted">Try removing your search keyword or expanding your price range.</p>
+          </div>
+        @endif
       </div>
     </div>
     @endforeach

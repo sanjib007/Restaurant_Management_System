@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Item;
 use App\Models\Order;
+use App\Models\OrderCancelRequest;
 use App\Models\Review;
 use App\Models\Role;
 use App\Models\User;
@@ -13,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Session;
 
 class AuthenticatedController extends Controller
@@ -46,6 +49,69 @@ class AuthenticatedController extends Controller
         }
   
         return redirect("login")->withSuccess('Oppes! You have entered invalid credentials');
+    }
+
+    public function forgotPassword()
+    {
+        return view('pages.forgot_password');
+    }
+
+    public function postForgotPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email'
+        ], [
+            'email.exists' => 'No account found with this email address.'
+        ]);
+
+        $token = Str::random(64);
+
+        DB::table('password_resets')->where('email', $request->email)->delete();
+        DB::table('password_resets')->insert([
+            'email' => $request->email,
+            'token' => $token,
+            'created_at' => now()
+        ]);
+
+        // Generate immediate reset link for local/developer access or email fallback
+        $resetUrl = route('password.reset', ['token' => $token, 'email' => $request->email]);
+
+        return redirect()->back()->with([
+            'success' => 'Password reset link generated successfully!',
+            'reset_url' => $resetUrl
+        ]);
+    }
+
+    public function resetPassword(Request $request, $token)
+    {
+        $email = $request->input('email');
+        return view('pages.reset_password', compact('token', 'email'));
+    }
+
+    public function postResetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|min:6|confirmed',
+            'token' => 'required'
+        ]);
+
+        $resetRecord = DB::table('password_resets')
+            ->where('email', $request->email)
+            ->where('token', $request->token)
+            ->first();
+
+        if (!$resetRecord) {
+            return redirect()->back()->withErrors(['email' => 'Invalid or expired password reset link.']);
+        }
+
+        $user = User::where('email', $request->email)->first();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        DB::table('password_resets')->where('email', $request->email)->delete();
+
+        return redirect()->route('login')->withSuccess('Your password has been reset successfully! You can now login.');
     }
       
     /**
@@ -185,19 +251,94 @@ class AuthenticatedController extends Controller
      *
      * @return response()
      */
-    public function dashboard()
+    public function dashboard(Request $request)
     {
         if(Auth::check()){
 
             $getAllItem = Session::get('orderedItem');
-            if(Auth::user()->roles->pluck('name')[0] == "admin"){
-                $orderHistory = Order::orderBy('id', 'desc')->paginate(7);
-                //dd($orderHistory);
-            }else{
-                $orderHistory = Order::orderBy('id', 'desc')->where('user_id', '=', Auth::user()->id)->paginate(7);
-            }            
 
-            return view('pages.secure.dashboard', compact('getAllItem', 'orderHistory'));
+            $searchOrderNo    = $request->input('search_order_no');
+            $searchOrderDate  = $request->input('search_order_date');
+            $searchCustomer   = $request->input('search_customer');
+
+            $pendingCancelCount = 0;
+            $newOrdersCount = 0;
+            $processingOrdersCount = 0;
+            $takeawayOrdersCount = 0;
+            $presentCustomerOrdersCount = 0;
+
+            if(Auth::user()->roles->pluck('name')[0] == "admin"){
+                $pendingCancelCount = OrderCancelRequest::where('status', 'Pending')->count();
+                $newOrdersCount = Order::where('order_status', 'New')->count();
+                $processingOrdersCount = Order::where('order_status', 'processing')->count();
+                $takeawayOrdersCount = Order::where('order_position', 'takeaway')->count();
+                $presentCustomerOrdersCount = Order::where('order_position', 'present')->count();
+
+                $query = Order::with(['user', 'cancelRequest'])->orderBy('orders.id', 'desc');
+
+                if($searchOrderNo) {
+                    $query->where('order_number', 'like', '%' . $searchOrderNo . '%');
+                }
+                if($searchOrderDate) {
+                    $query->whereDate('orders.created_at', $searchOrderDate);
+                }
+                if($searchCustomer) {
+                    $query->whereHas('user', fn($q) =>
+                        $q->where('name', 'like', '%'.$searchCustomer.'%')
+                          ->orWhere('email', 'like', '%'.$searchCustomer.'%')
+                    );
+                }
+
+                $orderHistory = $query->paginate(7)->appends(
+                    $request->only(['search_order_no','search_order_date','search_customer'])
+                );
+            }else{
+                $orderHistory = Order::with(['user', 'cancelRequest'])
+                    ->orderBy('id', 'desc')
+                    ->where('user_id', '=', Auth::user()->id)
+                    ->when($searchOrderNo,   fn($q) => $q->where('order_number', 'like', '%'.$searchOrderNo.'%'))
+                    ->when($searchOrderDate, fn($q) => $q->whereDate('created_at', $searchOrderDate))
+                    ->paginate(7)
+                    ->appends($request->only(['search_order_no','search_order_date']));
+            }
+
+            $reportFromDate = $request->input('report_from_date');
+            $reportToDate   = $request->input('report_to_date');
+
+            $baseReportQuery = Auth::user()->roles->pluck('name')[0] == "admin"
+                ? Order::query()
+                : Order::where('user_id', Auth::user()->id);
+
+            $calcStat = function($q) {
+                return [
+                    'count' => (clone $q)->count(),
+                    'money' => (clone $q)->where('order_status', '!=', 'Cancel')->sum('total_amount')
+                ];
+            };
+
+            $reportStats = [
+                'today'    => $calcStat((clone $baseReportQuery)->whereDate('created_at', now()->toDateString())),
+                'weekly'   => $calcStat((clone $baseReportQuery)->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])),
+                'monthly'  => $calcStat((clone $baseReportQuery)->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)),
+                'yearly'   => $calcStat((clone $baseReportQuery)->whereYear('created_at', now()->year)),
+                'all_time' => $calcStat(clone $baseReportQuery),
+            ];
+
+            $customQuery = clone $baseReportQuery;
+            if ($reportFromDate) {
+                $customQuery->whereDate('created_at', '>=', $reportFromDate);
+            }
+            if ($reportToDate) {
+                $customQuery->whereDate('created_at', '<=', $reportToDate);
+            }
+            $reportStats['custom'] = $calcStat($customQuery);
+
+            return view('pages.secure.dashboard', compact(
+                'getAllItem', 'orderHistory',
+                'searchOrderNo', 'searchOrderDate', 'searchCustomer', 'pendingCancelCount',
+                'newOrdersCount', 'processingOrdersCount', 'takeawayOrdersCount', 'presentCustomerOrdersCount',
+                'reportStats', 'reportFromDate', 'reportToDate'
+            ));
         }
         return redirect("login")->withSuccess('Opps! You do not have access');
     }
@@ -217,14 +358,36 @@ class AuthenticatedController extends Controller
         return redirect("login")->withSuccess('Opps! You do not have access');
     }
 
-    public function order()
+    public function order(Request $request)
     {
         if(Auth::check()){
 
-            $newOrderHistory = Order::orderBy('id', 'desc')->where('order_status', '=', 'New')->paginate(7, '*', 'new');
-            $processingOrderHistory = Order::orderBy('id', 'desc')->where('order_status', '=', 'processing')->paginate(7, '*', 'processing');
-            $completedOrderHistory = Order::orderBy('id', 'desc')->whereIn('order_status', array('Completed','Cancel'))->paginate(7, '*', 'completed');
-            return view('pages.secure.order', compact('newOrderHistory', 'processingOrderHistory', 'completedOrderHistory'));
+            $searchOrderNo   = $request->input('search_order_no');
+            $searchOrderDate = $request->input('search_order_date');
+
+            $pendingCancelCount = OrderCancelRequest::where('status', 'Pending')->count();
+
+            $baseQuery = fn() => Order::with(['user', 'cancelRequest'])
+                ->orderBy('id', 'desc')
+                ->when($searchOrderNo,   fn($q) => $q->where('order_number', 'like', '%'.$searchOrderNo.'%'))
+                ->when($searchOrderDate, fn($q) => $q->whereDate('created_at', $searchOrderDate));
+
+            $newOrderHistory        = (clone $baseQuery())->where('order_status', 'New')
+                                        ->paginate(7, '*', 'new')
+                                        ->appends($request->only(['search_order_no','search_order_date']));
+
+            $processingOrderHistory = (clone $baseQuery())->where('order_status', 'processing')
+                                        ->paginate(7, '*', 'processing')
+                                        ->appends($request->only(['search_order_no','search_order_date']));
+
+            $completedOrderHistory  = (clone $baseQuery())->whereIn('order_status', ['Completed','Cancel'])
+                                        ->paginate(7, '*', 'completed')
+                                        ->appends($request->only(['search_order_no','search_order_date']));
+
+            return view('pages.secure.order', compact(
+                'newOrderHistory', 'processingOrderHistory', 'completedOrderHistory',
+                'searchOrderNo', 'searchOrderDate', 'pendingCancelCount'
+            ));
 
         }
         return redirect("login")->withSuccess('Opps! You do not have access');
@@ -257,12 +420,22 @@ class AuthenticatedController extends Controller
         }
         return redirect("login")->withSuccess('Opps! You do not have access');
     }
-    public function showItemAndCat()
+    public function showItemAndCat(Request $request)
     {
         if(Auth::check()){
             $categories = Category::all();
-            $items = DB::select("SELECT i.*, c.category_name FROM items i INNER JOIN categories c on i.category_id = c.id");
-            return view('pages.secure.Item-insert', compact('categories', 'items'));
+            $searchFoodName = $request->input('search_food_name');
+            $searchCategory = $request->input('search_category');
+
+            $items = Item::select('items.*', 'categories.category_name')
+                ->join('categories', 'items.category_id', '=', 'categories.id')
+                ->when($searchFoodName, fn($q) => $q->where('items.item_name', 'like', '%'.$searchFoodName.'%'))
+                ->when($searchCategory, fn($q) => $q->where('items.category_id', $searchCategory))
+                ->orderBy('items.id', 'desc')
+                ->paginate(8)
+                ->appends($request->only(['search_food_name', 'search_category']));
+
+            return view('pages.secure.Item-insert', compact('categories', 'items', 'searchFoodName', 'searchCategory'));
         }
         return redirect("login")->withSuccess('Opps! You do not have access');
     }
@@ -314,6 +487,9 @@ class AuthenticatedController extends Controller
 
     public function show_food(){
        $sliders = \App\Models\Slider::where('is_active', true)->orderBy('sort_order')->get();
-       return view('pages.guest.home', compact('sliders'));
+       $featuredItems = \App\Models\Item::take(6)->get();
+       $categories = \App\Models\Category::take(4)->get();
+       $reviews = \App\Models\Review::orderBy('id', 'desc')->take(3)->get();
+       return view('pages.guest.home', compact('sliders', 'featuredItems', 'categories', 'reviews'));
     }
 }

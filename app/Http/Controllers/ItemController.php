@@ -77,16 +77,43 @@ class ItemController extends Controller
     }
 
 
-    public function showOurMenu()
+    public function showOurMenu(Request $request)
     {
-        
+        $searchName = $request->input('search_name');
+        $minPrice   = $request->input('min_price');
+        $maxPrice   = $request->input('max_price');
+        $sortBy     = $request->input('sort_by', 'id_desc');
+
         $categories = Category::all();        
         foreach($categories as $aCat){
-            $test = Item::where('category_id', '=', $aCat->id)->get();
-            $aCat['items'] = $test;
-        };
+            $query = Item::where('category_id', '=', $aCat->id);
+
+            if($searchName){
+                $query->where('item_name', 'like', '%'.$searchName.'%');
+            }
+            if(is_numeric($minPrice) && $minPrice !== ''){
+                $query->where('item_price', '>=', $minPrice);
+            }
+            if(is_numeric($maxPrice) && $maxPrice !== ''){
+                $query->where('item_price', '<=', $maxPrice);
+            }
+
+            if($sortBy == 'name_asc'){
+                $query->orderBy('item_name', 'asc');
+            } elseif($sortBy == 'name_desc'){
+                $query->orderBy('item_name', 'desc');
+            } elseif($sortBy == 'price_asc'){
+                $query->orderBy('item_price', 'asc');
+            } elseif($sortBy == 'price_desc'){
+                $query->orderBy('item_price', 'desc');
+            } else {
+                $query->orderBy('id', 'desc');
+            }
+
+            $aCat['items'] = $query->get();
+        }
         
-        return view('pages.guest.our-menu', compact('categories'));
+        return view('pages.guest.our-menu', compact('categories', 'searchName', 'minPrice', 'maxPrice', 'sortBy'));
     }
 
     public function getItemWithJson($id)

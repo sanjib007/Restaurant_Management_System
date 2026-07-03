@@ -35,6 +35,11 @@ Route::post('register_post', [AuthenticatedController::class, 'postRegistration'
 Route::get('login', [AuthenticatedController::class, 'login'])->name('login');
 Route::post('login_post', [AuthenticatedController::class, 'postLogin'])->name('login.post');
 Route::get('logout', [AuthenticatedController::class, 'logout'])->name('logout');
+
+Route::get('forgot-password', [AuthenticatedController::class, 'forgotPassword'])->name('password.request');
+Route::post('forgot-password', [AuthenticatedController::class, 'postForgotPassword'])->name('password.email');
+Route::get('reset-password/{token}', [AuthenticatedController::class, 'resetPassword'])->name('password.reset');
+Route::post('reset-password', [AuthenticatedController::class, 'postResetPassword'])->name('password.update');
 Route::get('dashboard', [AuthenticatedController::class, 'dashboard'])->name('home');
 Route::get('food', [AuthenticatedController::class, 'show_food'])->name('food');
 Route::get('profile', [AuthenticatedController::class, 'profile'])->name('profile');
@@ -85,3 +90,10 @@ Route::get('submitOrderProcess/{id}', [orderController::class, 'submitOrderProce
 Route::get('submitOrderComplete/{id}', [orderController::class, 'submitOrderComplete'])->name('order.complete');
 Route::get('orderPaid/{id}', [orderController::class, 'orderPaid'])->name('order.paid');
 Route::get('orderCancel/{id}', [orderController::class, 'orderCancel'])->name('order.cancel');
+Route::get('order-detail/{id}', [orderController::class, 'getOrderDetail'])->name('order.detail');
+
+// Cancel Request routes
+Route::post('cancel-request',              [orderController::class, 'submitCancelRequest'])->name('order.cancelRequest');
+Route::get('cancel-requests',              [orderController::class, 'cancelRequests'])->name('order.cancelRequests');
+Route::post('cancel-request/{id}/approve', [orderController::class, 'approveCancelRequest'])->name('order.cancelRequest.approve');
+Route::post('cancel-request/{id}/reject',  [orderController::class, 'rejectCancelRequest'])->name('order.cancelRequest.reject');
