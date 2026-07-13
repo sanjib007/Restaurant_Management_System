@@ -80,6 +80,20 @@
           </a>
         </li>
         <li class="nav-item">
+          <a href="{{ route('order.cancelRequests') }}" class="nav-link">
+            <i class="nav-icon far fa-circle text-danger"></i>
+            <p>
+              Cancel Requests
+              @php
+                $pendingCancelMenuCount = \App\Models\OrderCancelRequest::where('status', 'Pending')->count();
+              @endphp
+              @if($pendingCancelMenuCount > 0)
+                <span class="right badge badge-danger">{{ $pendingCancelMenuCount }}</span>
+              @endif
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
           <a href="{{ route('item-insert') }}" class="nav-link">
             <i class="nav-icon far fa-circle text-warning"></i>
             <p>Item Insert</p>

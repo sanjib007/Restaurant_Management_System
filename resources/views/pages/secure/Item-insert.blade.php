@@ -177,13 +177,67 @@
                       <!-- /.card -->
                 </div>
                 <div class="col-sm-12">
+                    {{-- ─── Search Card ─── --}}
+                    <div class="card card-outline card-primary mb-3">
+                      <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-search mr-2"></i>Search Food Items</h3>
+                        <div class="card-tools">
+                          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="card-body pb-1">
+                        <form method="GET" action="{{ route('item-insert') }}">
+                          <div class="row align-items-end">
+                            <div class="col-md-5 mb-2">
+                              <label class="mb-1" style="font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#718096;">Food Name</label>
+                              <div class="input-group input-group-sm">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text" style="background:#f1f5f9;"><i class="fas fa-utensils text-muted"></i></span>
+                                </div>
+                                <input type="text" name="search_food_name" class="form-control"
+                                       placeholder="Search by food name…" value="{{ $searchFoodName ?? '' }}">
+                              </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                              <label class="mb-1" style="font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#718096;">Category</label>
+                              <div class="input-group input-group-sm">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text" style="background:#f1f5f9;"><i class="fas fa-tags text-muted"></i></span>
+                                </div>
+                                <select name="search_category" class="form-control">
+                                  <option value="">All Categories</option>
+                                  @foreach ($categories as $aCat)
+                                    <option value="{{ $aCat->id }}" {{ ($searchCategory ?? '') == $aCat->id ? 'selected' : '' }}>
+                                      {{ $aCat->category_name }}
+                                    </option>
+                                  @endforeach
+                                </select>
+                              </div>
+                            </div>
+                            <div class="col-md-3 mb-2 d-flex" style="gap:6px;">
+                              <button type="submit" class="btn btn-primary btn-sm flex-fill" style="border-radius:6px;">
+                                <i class="fas fa-search mr-1"></i> Search
+                              </button>
+                              <a href="{{ route('item-insert') }}" class="btn btn-secondary btn-sm flex-fill" style="border-radius:6px;">
+                                <i class="fas fa-times mr-1"></i> Clear
+                              </a>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+
                     <div class="card">
                         <div class="card-header">
-                          <h3 class="card-title">Food Item </h3>
+                          <h3 class="card-title">Food Item List</h3>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                          <table class="table">
+                          @if($items->count() > 0)
+                          <div class="table-responsive">
+                          <table class="table table-hover">
                             <thead>
                               <tr>
                                 <th>Food Name</th>
@@ -197,29 +251,30 @@
                             <tbody class="table-border-bottom-0">
                               @foreach ($items as $aItem)
                               <tr>
-                                <td>{{ $aItem->item_name }}</td>
-                                <td class="ellipsis">{{ $aItem->item_description }}</td>
-                                <td>{{ $aItem->item_price }}/-</td>
-                                <td><img style="width: 100px;" src="{{ asset('assets/img/items/'.$aItem->item_image) }}" alt="Item"></td>
-                                <td>{{ $aItem->category_name }}</td>
+                                <td><strong>{{ $aItem->item_name }}</strong></td>
+                                <td class="ellipsis" style="max-width:250px;">{!! strip_tags($aItem->item_description) !!}</td>
+                                <td><strong>{{ $aItem->item_price }}/-</strong></td>
+                                <td><img style="width: 80px; border-radius:6px; object-fit:cover;" src="{{ asset('assets/img/items/'.$aItem->item_image) }}" alt="Item"></td>
+                                <td><span class="badge badge-info">{{ $aItem->category_name }}</span></td>
                                 <td>
-                                    <a href="{{ route('item.edit', $aItem->id ) }}" class="btn btn-warning btn-xs"><i class="fa fa-edit"></i></a> || 
-                                    <a href="{{ route('item.delete', $aItem->id ) }}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i></a>
+                                    <a href="{{ route('item.edit', $aItem->id ) }}" class="btn btn-warning btn-xs"><i class="fa fa-edit"></i></a>
+                                    <a href="{{ route('item.delete', $aItem->id ) }}" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure you want to delete this food item?')"><i class="fa fa-times"></i></a>
                                 </td>
                               </tr>
                               @endforeach
                             </tbody>
                           </table>
+                          </div>
+                          @else
+                          <div class="text-center py-5 text-muted">
+                            <i class="fas fa-utensils fa-3x mb-3"></i>
+                            <p class="mb-0">No food items found matching your search.</p>
+                          </div>
+                          @endif
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer clearfix">
-                          <ul class="pagination pagination-sm m-0 float-right">
-                            <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-                          </ul>
+                          {{ $items->links() }}
                         </div>
                       </div>
                       <!-- /.card -->
