@@ -72,13 +72,15 @@
           </a>
         </li>
 
-        @if (Auth::user()->roles->pluck('name')[0] == 'admin')
+        @can('Order.View')
         <li class="nav-item">
           <a href="{{ route('order') }}" class="nav-link">
             <i class="nav-icon far fa-circle text-warning"></i>
             <p>Order</p>
           </a>
         </li>
+        @endcan
+        @can('CancelRequest.View')
         <li class="nav-item">
           <a href="{{ route('order.cancelRequests') }}" class="nav-link">
             <i class="nav-icon far fa-circle text-danger"></i>
@@ -93,25 +95,31 @@
             </p>
           </a>
         </li>
+        @endcan
+        @can('Category.View')
         <li class="nav-item">
           <a href="{{ route('item-insert') }}" class="nav-link">
             <i class="nav-icon far fa-circle text-warning"></i>
             <p>Item Insert</p>
           </a>
         </li>
+        @endcan
+        @can('Slider.View')
         <li class="nav-item">
           <a href="{{ route('slider.index') }}" class="nav-link">
             <i class="nav-icon far fa-circle text-warning"></i>
             <p>Slider Manager</p>
           </a>
         </li>
+        @endcan
+        @can('User.View')
         <li class="nav-item">
           <a href="{{ route('user') }}" class="nav-link">
             <i class="nav-icon far fa-circle text-warning"></i>
             <p>User Insert</p>
           </a>
         </li>
-        @endif
+        @endcan
 
       </ul>
     </nav>

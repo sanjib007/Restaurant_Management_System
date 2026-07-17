@@ -127,6 +127,7 @@
                                     <select class="form-control" name="order_position" id="order_position_select">
                                       <option value="present" checked>Presnet here</option>
                                       <option value="takeaway">Take away</option>
+                                      <option value="home_delivery">Home Delivery</option>
                                     </select>
                                   </div>
                                 </div>

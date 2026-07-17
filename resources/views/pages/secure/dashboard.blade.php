@@ -2,15 +2,9 @@
 
 @section('content')
 
-@if(Auth::user()->roles->pluck('name')[0] == "admin")
+@if(Auth::user()->isAdmin())
   @include('share-layout.admin-dashboard')
-@endif
-
-@if(Auth::user()->roles->pluck('name')[0] == "customer")
-  @include('share-layout.customer-dashboard')
-@endif
-
-@if(Auth::user()->roles->pluck('name')[0] == "manager")
+@elseif(Auth::user()->hasRole(['customer', 'manager']))
   @include('share-layout.customer-dashboard')
 @endif
 

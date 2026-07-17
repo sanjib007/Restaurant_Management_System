@@ -28,6 +28,7 @@ class Role_userSeeder extends Seeder
             }
         };
 
+        $attachRole('superadmin@example.com','super_admin');
         $attachRole('admin@gmail.com','admin');
         $attachRole('manager1@example.com','manager');
         $attachRole('manager2@example.com','manager');

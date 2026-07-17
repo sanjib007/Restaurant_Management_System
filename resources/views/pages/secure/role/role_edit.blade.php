@@ -47,6 +47,33 @@
                                             <textarea type="text" name="description" class="form-control"
                                             id="description" placeholder="Role Description">{{ $role->description }}</textarea>
                                         </div>
+
+                                        <div class="form-group">
+                                            <label>Permissions</label>
+                                            @forelse ($permissions as $module => $modulePermissions)
+                                                <div class="card card-outline card-secondary mb-2">
+                                                    <div class="card-header py-2">
+                                                        <strong>{{ $module }}</strong>
+                                                    </div>
+                                                    <div class="card-body py-2">
+                                                        @foreach ($modulePermissions as $permission)
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    name="permissions[]" value="{{ $permission->id }}"
+                                                                    id="permission_{{ $permission->id }}"
+                                                                    {{ in_array($permission->id, $assignedPermissionIds) ? 'checked' : '' }}>
+                                                                <label class="form-check-label"
+                                                                    for="permission_{{ $permission->id }}">
+                                                                    {{ $permission->name }}
+                                                                </label>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <p class="text-muted">No permissions have been defined yet.</p>
+                                            @endforelse
+                                        </div>
                                     </div>
                                     <!-- /.card-body -->
                                     <div class="card-footer">

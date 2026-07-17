@@ -16,6 +16,7 @@ class UserSeeder extends Seeder
     public function run()
     {
         $users = [
+            ['name' => 'superadmin', 'email' => 'superadmin@example.com', 'password' => Hash::make('password'), 'image' => 'avatar5.png'],
             ['name' => 'admin', 'email' => 'admin@gmail.com', 'password' => Hash::make('password'), 'image' => 'avatar5.png'],
             ['name' => 'manager1', 'email' => 'manager1@example.com', 'password' => Hash::make('password'), 'image' => 'manager1.png'],
             ['name' => 'manager2', 'email' => 'manager2@example.com', 'password' => Hash::make('password'), 'image' => 'manager2.png'],

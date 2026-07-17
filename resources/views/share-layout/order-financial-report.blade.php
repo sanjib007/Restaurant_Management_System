@@ -9,7 +9,7 @@
         <br/>
         <br/>
         <p class="text-muted mb-0" style="font-size: 0.85rem;">
-          {{ Auth::user()->roles->pluck('name')[0] == 'admin' ? 'System-wide overall performance metrics & total revenue check.' : 'Your personal order metrics and total amount spent check.' }}
+          {{ Auth::user()->isAdmin() ? 'System-wide overall performance metrics & total revenue check.' : 'Your personal order metrics and total amount spent check.' }}
         </p>
       </div>
       

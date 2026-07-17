@@ -221,7 +221,7 @@
                     <i class="fas fa-eye"></i> View Details
                   </a>
                   <button type="button" value="{{ $aItem->id }}" class="btn btn-outline-info btn-sm menu-action-btn test_click" data-toggle="modal" data-target="#modal-default">
-                    <i class="fas fa-shopping-cart"></i> Order Now
+                    <i class="fas fa-shopping-cart"></i> Add to Cart
                   </button>
                 </div>
               </div>

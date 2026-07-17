@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Item;
 use App\Models\Order;
 use App\Models\OrderCancelRequest;
+use App\Models\Permission;
 use App\Models\Review;
 use App\Models\Role;
 use App\Models\User;
@@ -267,7 +268,7 @@ class AuthenticatedController extends Controller
             $takeawayOrdersCount = 0;
             $presentCustomerOrdersCount = 0;
 
-            if(Auth::user()->roles->pluck('name')[0] == "admin"){
+            if(Auth::user()->isAdmin()){
                 $pendingCancelCount = OrderCancelRequest::where('status', 'Pending')->count();
                 $newOrdersCount = Order::where('order_status', 'New')->count();
                 $processingOrdersCount = Order::where('order_status', 'processing')->count();
@@ -305,7 +306,7 @@ class AuthenticatedController extends Controller
             $reportFromDate = $request->input('report_from_date');
             $reportToDate   = $request->input('report_to_date');
 
-            $baseReportQuery = Auth::user()->roles->pluck('name')[0] == "admin"
+            $baseReportQuery = Auth::user()->isAdmin()
                 ? Order::query()
                 : Order::where('user_id', Auth::user()->id);
 
@@ -444,10 +445,13 @@ class AuthenticatedController extends Controller
         if(Auth::check()){
 
             $roles = Role::all();
+            $permissions = Permission::orderBy('name')->get()->groupBy(function ($permission) {
+                return explode('.', $permission->name)[0];
+            });
 
             $users = DB::select('SELECT u.id, u.name as userName, u.email, u.image, r.name as roleName, r.description FROM users u INNER JOIN role_user ru on u.id = ru.user_id INNER JOIN roles r on r.id = ru.role_id');
 
-            return view('pages.secure.user-manage', compact('roles', 'users'));
+            return view('pages.secure.user-manage', compact('roles', 'users', 'permissions'));
         }
         return redirect("login")->withSuccess('Opps! You do not have access');
     }

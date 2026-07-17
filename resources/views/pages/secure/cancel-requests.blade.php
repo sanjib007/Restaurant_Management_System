@@ -115,14 +115,18 @@
                       </td>
                       <td>
                         @if($req->status === 'Pending')
-                          <button onclick="openApprove({{ $req->id }})"
-                                  class="btn btn-xs btn-success mb-1" style="border-radius:5px;">
-                            <i class="fas fa-check mr-1"></i>Approve
-                          </button>
-                          <button onclick="openReject({{ $req->id }})"
-                                  class="btn btn-xs btn-danger" style="border-radius:5px;">
-                            <i class="fas fa-times mr-1"></i>Reject
-                          </button>
+                          @can('CancelRequest.Approve')
+                            <button onclick="openApprove({{ $req->id }})"
+                                    class="btn btn-xs btn-success mb-1" style="border-radius:5px;">
+                              <i class="fas fa-check mr-1"></i>Approve
+                            </button>
+                          @endcan
+                          @can('CancelRequest.Reject')
+                            <button onclick="openReject({{ $req->id }})"
+                                    class="btn btn-xs btn-danger" style="border-radius:5px;">
+                              <i class="fas fa-times mr-1"></i>Reject
+                            </button>
+                          @endcan
                         @else
                           <span class="text-muted" style="font-size:.82rem;">Resolved</span>
                         @endif

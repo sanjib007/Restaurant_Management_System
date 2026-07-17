@@ -41,7 +41,7 @@
               <p class="text-muted mb-3">Price: <strong>{{ $item->item_price }}/-</strong></p>
               <p class="mb-4">Here is the full description of this food item. Scroll down for the complete detail content, including ingredients, preparation notes, and any additional formatting.</p>
               <button type="button" value="{{ $item->id }}" class="btn btn-primary test_click mr-2" data-toggle="modal" data-target="#modal-default">
-                Order Now
+                Add to Cart
               </button>
               <a href="{{ route('our.menu') }}" class="btn btn-outline-secondary">Back to Menu</a>
             </div>

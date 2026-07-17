@@ -11,12 +11,14 @@
         <div class="row mb-2">
           <div class="col-sm-6 d-flex align-items-center">
             <h1 class="mr-3">Order Manage</h1>
-            <a href="{{ route('order.cancelRequests') }}" class="btn btn-outline-danger btn-sm" style="border-radius:20px;font-weight:600;">
-              <i class="fas fa-exclamation-triangle mr-1"></i> Cancel Requests
-              @if(($pendingCancelCount ?? 0) > 0)
-                <span class="badge badge-danger ml-1">{{ $pendingCancelCount }}</span>
-              @endif
-            </a>
+            @can('CancelRequest.View')
+              <a href="{{ route('order.cancelRequests') }}" class="btn btn-outline-danger btn-sm" style="border-radius:20px;font-weight:600;">
+                <i class="fas fa-exclamation-triangle mr-1"></i> Cancel Requests
+                @if(($pendingCancelCount ?? 0) > 0)
+                  <span class="badge badge-danger ml-1">{{ $pendingCancelCount }}</span>
+                @endif
+              </a>
+            @endcan
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -137,9 +139,11 @@
                         <button onclick="viewOrderDetail({{ $aOrder->id }})" class="btn btn-block bg-gradient-info btn-xs mb-1">
                           <i class="fas fa-eye"></i> View
                         </button>
-                        @if ($aOrder->payment_status == 'Not Paid' && $aOrder->order_status != 'Cancel')
-                          <a href="{{ route('order.paid', $aOrder->id) }}" class="btn btn-block bg-gradient-warning btn-xs">Paid</a>
-                        @endif
+                        @can('Order.Paid')
+                          @if ($aOrder->payment_status == 'Not Paid' && $aOrder->order_status != 'Cancel')
+                            <a href="{{ route('order.paid', $aOrder->id) }}" class="btn btn-block bg-gradient-warning btn-xs">Paid</a>
+                          @endif
+                        @endcan
                       </td>
                     </tr>
                     @endforeach
@@ -199,8 +203,12 @@
                         <button onclick="viewOrderDetail({{ $aOrder->id }})" class="btn btn-block bg-gradient-info btn-xs mb-1">
                           <i class="fas fa-eye"></i> View
                         </button>
-                        <a href="{{ route('order.process', $aOrder->id) }}" class="btn btn-block bg-gradient-warning btn-xs mb-1">Make Processing</a>
-                        <a href="{{ route('order.cancel', $aOrder->id) }}" class="btn btn-block bg-gradient-danger btn-xs">Order Cancel</a>
+                        @can('Order.Process')
+                          <a href="{{ route('order.process', $aOrder->id) }}" class="btn btn-block bg-gradient-warning btn-xs mb-1">Make Processing</a>
+                        @endcan
+                        @can('Order.Cancel')
+                          <a href="{{ route('order.cancel', $aOrder->id) }}" class="btn btn-block bg-gradient-danger btn-xs">Order Cancel</a>
+                        @endcan
                         @if($aOrder->cancelRequest && $aOrder->cancelRequest->status == 'Pending')
                           <a href="{{ route('order.cancelRequests') }}" class="badge badge-warning d-block py-1 mt-1 text-dark" style="font-size:.75rem;">
                             <i class="fas fa-exclamation-circle mr-1"></i>Customer Req Cancel
@@ -265,7 +273,9 @@
                         <button onclick="viewOrderDetail({{ $aOrder->id }})" class="btn btn-block bg-gradient-info btn-xs mb-1">
                           <i class="fas fa-eye"></i> View
                         </button>
-                        <a href="{{ route('order.complete', $aOrder->id) }}" class="btn btn-block bg-gradient-warning btn-xs">Make Complete</a>
+                        @can('Order.Complete')
+                          <a href="{{ route('order.complete', $aOrder->id) }}" class="btn btn-block bg-gradient-warning btn-xs">Make Complete</a>
+                        @endcan
                       </td>
                     </tr>
                     @endforeach

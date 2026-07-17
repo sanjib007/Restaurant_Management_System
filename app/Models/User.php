@@ -27,6 +27,45 @@ class User extends Authenticatable
     ];
 
     /**
+     * Determine whether the user has any of the given role(s).
+     *
+     * @param  string|array<int, string>  $roles
+     */
+    public function hasRole($roles): bool
+    {
+        return $this->roles->pluck('name')->intersect((array) $roles)->isNotEmpty();
+    }
+
+    /**
+     * Admin-level users for UI/dashboard purposes. Super admins are treated
+     * as admins everywhere so they get the full admin experience.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasRole(['admin', 'super_admin']);
+    }
+
+    public function hasPermissionTo(string $permissionName): bool
+    {
+        if ($this->roles()->whereHas('permissions', fn ($query) => $query->where('name', $permissionName))->exists()) {
+            return true;
+        }
+
+        return $this->roles()->where('name', 'super_admin')->exists();
+    }
+
+    public function hasAnyPermission(array $permissionNames): bool
+    {
+        foreach ($permissionNames as $permissionName) {
+            if ($this->hasPermissionTo($permissionName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
@@ -45,10 +84,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function roles() : BelongsToMany
+    public function roles(): BelongsToMany
     {
-        return $this
-            ->belongsToMany(Role::class, 'role_user');
+        return $this->belongsToMany(Role::class, 'role_user');
     }
 
     public function orders() : HasMany
