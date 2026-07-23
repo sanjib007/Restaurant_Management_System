@@ -95,6 +95,12 @@ class PermissionSeeder extends Seeder
                 'Review.View',
                 'Profile.View', 'Profile.Update',
             ],
+            'delivery' => [
+                // Delivery staff handle home-delivery orders: see them, start the
+                // delivery, mark them delivered and collect payment.
+                'Order.View', 'Order.Process', 'Order.Complete', 'Order.Paid',
+                'Profile.View', 'Profile.Update',
+            ],
         ];
     }
 

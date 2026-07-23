@@ -257,6 +257,7 @@ class AuthenticatedController extends Controller
         if(Auth::check()){
 
             $getAllItem = Session::get('orderedItem');
+            $deliveryOrders = null;
 
             $searchOrderNo    = $request->input('search_order_no');
             $searchOrderDate  = $request->input('search_order_date');
@@ -303,6 +304,16 @@ class AuthenticatedController extends Controller
                     ->appends($request->only(['search_order_no','search_order_date']));
             }
 
+            // Delivery staff land on a dashboard listing the home-delivery orders
+            // they are responsible for.
+            if(!Auth::user()->isAdmin() && Auth::user()->hasRole('delivery')){
+                $deliveryOrders = Order::with('user')
+                    ->where('order_position', 'home_delivery')
+                    ->whereIn('order_status', ['New', 'Processing', 'Completed'])
+                    ->orderBy('id', 'desc')
+                    ->paginate(10);
+            }
+
             $reportFromDate = $request->input('report_from_date');
             $reportToDate   = $request->input('report_to_date');
 
@@ -335,7 +346,7 @@ class AuthenticatedController extends Controller
             $reportStats['custom'] = $calcStat($customQuery);
 
             return view('pages.secure.dashboard', compact(
-                'getAllItem', 'orderHistory',
+                'getAllItem', 'orderHistory', 'deliveryOrders',
                 'searchOrderNo', 'searchOrderDate', 'searchCustomer', 'pendingCancelCount',
                 'newOrdersCount', 'processingOrdersCount', 'takeawayOrdersCount', 'presentCustomerOrdersCount',
                 'reportStats', 'reportFromDate', 'reportToDate'

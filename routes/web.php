@@ -42,6 +42,9 @@ Route::get('reset-password/{token}', [AuthenticatedController::class, 'resetPass
 Route::post('reset-password', [AuthenticatedController::class, 'postResetPassword'])->name('password.update');
 Route::get('dashboard', [AuthenticatedController::class, 'dashboard'])->name('home');
 Route::get('food', [AuthenticatedController::class, 'show_food'])->name('food');
+Route::middleware(['auth'])->group(function () {
+    Route::get('home-delivery', [orderController::class, 'homeDelivery'])->name('home.delivery');
+});
 Route::middleware(['auth', 'permission:Profile.View'])->group(function () {
     Route::get('profile', [AuthenticatedController::class, 'profile'])->name('profile');
 });

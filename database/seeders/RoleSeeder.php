@@ -18,6 +18,7 @@ class RoleSeeder extends Seeder
             ['name' => 'super_admin', 'description' => 'Super Administrator'],
             ['name' => 'admin', 'description' => 'Administrator'],
             ['name' => 'manager', 'description' => 'Manager'],
+            ['name' => 'delivery', 'description' => 'Delivery Staff'],
             ['name' => 'customer', 'description' => 'Customer'],
         ];
 

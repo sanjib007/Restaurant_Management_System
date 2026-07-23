@@ -59,18 +59,30 @@
             <p>Dashboard</p>
           </a>
         </li>
+        @can('Order.Create')
+        <li class="nav-item">
+          <a href="{{ route('home.delivery') }}" class="nav-link">
+            <i class="nav-icon fas fa-truck text-success"></i>
+            <p>Home Delivery</p>
+          </a>
+        </li>
+        @endcan
+        @can('Profile.View')
         <li class="nav-item">
           <a href="{{ route('profile') }}" class="nav-link">
             <i class="nav-icon far fa-circle text-info"></i>
             <p>Profile</p>
           </a>
         </li>
+        @endcan
+        @can('Review.View')
         <li class="nav-item">
           <a href="{{ route('review') }}" class="nav-link">
             <i class="nav-icon far fa-circle text-info"></i>
             <p>Review</p>
           </a>
         </li>
+        @endcan
 
         @can('Order.View')
         <li class="nav-item">

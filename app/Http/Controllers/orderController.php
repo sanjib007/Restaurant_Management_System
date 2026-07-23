@@ -14,6 +14,14 @@ use Session;
 
 class orderController extends Controller
 {
+    /**
+     * Show the dedicated Home Delivery page with the current cart items.
+     */
+    public function homeDelivery(){
+        $getAllItem = Session::has('orderedItem') ? Session::get('orderedItem') : [];
+        return view('pages.secure.home-delivery', compact('getAllItem'));
+    }
+
     public function submitOrder(Request $request){
 
         if($request->order_position == 'present'){
@@ -24,7 +32,7 @@ class orderController extends Controller
                 'order_table_no' => 'required',
                 'order_payment_method' => 'required'
             ]);
-        }else if($request->order_position == 'takeaway'){
+        }else if($request->order_position == 'takeaway' || $request->order_position == 'home_delivery'){
             $request->validate([
                 'order_contact_name' => 'required',
                 'order_contact_mobile' => 'required',

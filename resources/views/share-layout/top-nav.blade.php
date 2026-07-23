@@ -45,6 +45,11 @@
   <li class="nav-item d-none d-sm-inline-block">
     <a href="{{ route('our.menu') }}" class="nav-link">Our Menu</a>
   </li>
+  @can('Order.Create')
+  <li class="nav-item d-none d-sm-inline-block">
+    <a href="{{ route('home.delivery') }}" class="nav-link"><i class="fas fa-truck mr-1"></i>Home Delivery</a>
+  </li>
+  @endcan
   <li class="nav-item d-none d-sm-inline-block">
     <a href="{{ route('contact') }}" class="nav-link">Contact</a>
   </li>

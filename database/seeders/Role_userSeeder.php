@@ -32,6 +32,9 @@ class Role_userSeeder extends Seeder
         $attachRole('admin@gmail.com','admin');
         $attachRole('manager1@example.com','manager');
         $attachRole('manager2@example.com','manager');
+        $attachRole('delivery1@example.com','delivery');
+        $attachRole('delivery2@example.com','delivery');
+        $attachRole('delivery3@example.com','delivery');
         for ($i = 1; $i <= 10; $i++) {
             $attachRole("customer{$i}@example.com",'customer');
         }
